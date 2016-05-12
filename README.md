@@ -13,9 +13,9 @@ with content are done using API. Currently few operations are still unsupported 
 ##### Flat
 Stepic api schema if flat, meaning there is no multi-level end-points.
 
-Every request return list of objects, even if only one object was asked. List can contain from 0 or more elements.
+Every request return list of objects, even if only one object was asked. List can contain 0 or more elements.
 
-Foe example response `from https://stepic.org/api/courses/1`have not one course object, but array, containing one course object.
+For example response `from https://stepic.org/api/courses/1`have not one course object, but array, containing one course object.
 
 ###### Pagination
 All responses from GET are 1)paginated 2)have extra `meta` object with extra information about pagination. For example:
