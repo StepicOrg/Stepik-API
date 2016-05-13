@@ -10,7 +10,7 @@ The most part of Stepic.org is written as single-page application using Ember.js
 with content are done using API. Currently few operations are still unsupported through API.
 
 ### Basic
-##### Flat
+###### Flat
 Stepic api schema if flat, meaning there is no multi-level end-points.
 
 Every request return list of objects, even if only one object was asked. List can contain 0 or more elements.
@@ -52,23 +52,20 @@ Token endpoint (Authorization code, Password и Client credentials):<br> `https:
 ###### Client credentials flow
 You can than obtain access token using this client credential flow:<br>
 
-- ```curl -X POST -d "grant_type=client_credentials" -u"CLIENT_ID:CLIENT_SECRET" https://stepic.org/oauth2/token/
-```<br>
+ `curl -X POST -d "grant_type=client_credentials" -u"CLIENT_ID:CLIENT_SECRET" https://stepic.org/oauth2/token/`<br>
+
 
 Response: 
 
-```{"access_token": "ACCESS_TOKEN", "scope": "read write", "expires_in": 36000, "token_type": "Bearer"}
-```
+`{"access_token": "ACCESS_TOKEN", "scope": "read write", "expires_in": 36000, "token_type": "Bearer"}`
 
 Example with access token:
 
-```curl -H "Authorization: Bearer ACCESS_TOKEN" "https://stepic.org/api/social-accounts?provider=github&uid=1216"
-```
+`curl -H "Authorization: Bearer ACCESS_TOKEN" "https://stepic.org/api/social-accounts?provider=github&uid=1216"`
 
 Response:
 
-```{"meta": {"page": 1, "has_next": false, "has_previous": false}, "social-accounts": []}
-```
+`{"meta": {"page": 1, "has_next": false, "has_previous": false}, "social-accounts": []}`
 
 ##### Authorization code flow
 
