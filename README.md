@@ -57,17 +57,17 @@ You can than obtain access token using this client credential flow:<br>
 
 Response: 
 
-- ```{"access_token": "ACCESS_TOKEN", "scope": "read write", "expires_in": 36000, "token_type": "Bearer"}
+```{"access_token": "ACCESS_TOKEN", "scope": "read write", "expires_in": 36000, "token_type": "Bearer"}
 ```
 
 Example with access token:
 
-- ```curl -H "Authorization: Bearer ACCESS_TOKEN" "https://stepic.org/api/social-accounts?provider=github&uid=1216"
+```curl -H "Authorization: Bearer ACCESS_TOKEN" "https://stepic.org/api/social-accounts?provider=github&uid=1216"
 ```
 
 Response:
 
-- ```{"meta": {"page": 1, "has_next": false, "has_previous": false}, "social-accounts": []}
+```{"meta": {"page": 1, "has_next": false, "has_previous": false}, "social-accounts": []}
 ```
 
 ##### Authorization code flow
