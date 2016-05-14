@@ -127,4 +127,6 @@ Supported by all endpoins.
 
 - VideoDownloader: <a href="https://github.com/StepicOrg/stepic-oauth2-videodownloader">stepic-oauth2-videodownloader</a>
 
-- iOS app: <a href="/examples/oauth_auth_example.py">oauth_auth_example.py</a>
+- iOS app: <a href="https://github.com/StepicOrg/stepic-ios">Stepic iOS app</a>
+
+- Android app: <a href="https://github.com/StepicOrg/stepic-android">Stepic Android app</a>
