@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs)
+Some API examples may be outdated if API buid failing:  [![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs)
 
-<h4>Stepic.org API overview</h4>
+#Stepic.org API overview
 
 ### Overview
 Stepic.org uses REST API in JSON format. 
