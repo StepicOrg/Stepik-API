@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs)
+
 <h4>Stepic.org API overview</h4>
 
 ### Overview
