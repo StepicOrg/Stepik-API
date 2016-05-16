@@ -4,7 +4,7 @@ Stepic.org has REST API in JSON format. API endpoints are listed on https://step
 
 Stepic.org use the same API for its web front-end (JS app) and its iOS/Android applications. Therefore, almost all the platform features are supported in this API.
 
-All API examples are up to date and working iff the build status is `passed`: [![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs) 
+All API examples are up to date and working if the build status is `passed`: [![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs) 
 
 ## Flat
 
