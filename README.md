@@ -1,62 +1,63 @@
-Some API examples may be outdated if API buid failing<br>
-[![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs)
+[![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs) (all API examples are up to date if the build status is passed)
 
-#Stepic.org API overview
+# Stepic.org API
 
-### Overview
-Stepic.org uses REST API in JSON format. 
+## Overview
 
-All the endpoints listed at <a href="https://stepic.org/api/docs">https://stepic.org/api/docs</a><br>
-It's also possible to test requests on that url. Methods from `/api/docs` are restricted only to `GET` requests.
+Stepic.org has REST API in JSON format. 
 
-The most part of Stepic.org is written as single-page application using Ember.js framework, and all the interactions<br>
-with content are done using API. Currently few operations are still unsupported through API.
+All the endpoints listed at https://stepic.org/api/docs (you can also try to call API there, but it's limited to `GET` requests).
 
-### Basic
-###### Flat
-Stepic api schema if flat, meaning there is no multi-level end-points.
+Stepic.org uses the same API for its web front-end (single-page JS application). Therefore, most of features are supported in the API.
 
-Every request return list of objects, even if only one object was asked. List can contain 0 or more elements.
+## Flat
 
-For example response `from https://stepic.org/api/courses/1`have not one course object, but array, containing one course object.
+Stepic API schema is flat, i.e. there are no nested end-points.
 
-###### Pagination
-All responses from GET are 1)paginated 2)have extra `meta` object with extra information about pagination. For example:
-```{
+Every request returns a list of objects, even if only one object was requested. This list can contain 0 or more elements.
+
+For example: `https://stepic.org/api/courses/1` returns not a single course, but a list with single course.
+
+## Pagination
+
+All responses from `GET` requests are paginated. They contain extra `meta` object with the information about pagination. It may looks like this:
+```
+{
     meta: {
         page: 1,
         has_next: true,
         has_previous: false
     },
     requested_objects: [...]
-}```<br>
-If next page exists, it can be requested using Query parameters: `page=...`, by default, if no query given, it's equal to 1:
+}
+```
 
-`https://stepic.org/api/courses` is equal to `https://stepic.org/api/courses?page=1`<br>
-next page: `https://stepic.org/api/courses?page=2` and so on.
+If the next page exists, then it can be requested using get parameter `?page=...`. By default, if no parameter is given, it's equal to 1.
 
-Usual page size is equal to 20 elements, but it can vary due to permission, api endpoint or other cases.<br>
-We <b>do not recommend to rely on constant page size</b>, instead, pagination size should always be calculated after response.
+For example: `https://stepic.org/api/courses` is equal to `https://stepic.org/api/courses?page=1`. Next page: `https://stepic.org/api/courses?page=2` and so on.
 
-###### Side-Loading
-Response may also contain multiple related objects. For example, for registered user, request to `https://stepic.org/api/courses`  also include user course `enrollments`. 
+Usual page size is equal to 20 elements, but it can vary due to API endpoint, users permissions etc. We <b>do not recommend to rely on a constant page size</b>.
 
+## Side-Loading
 
-###### OAuth 2
-For using Stepic.org API as registered uses, OAuth2 authorization needed.
-First you should register your application at `https://stepic.org/oauth2/applications/` while being logged in and obtain application keys.
-You can also set `redirect_uri`, `Client type` and `Authorization grant type` there.
+Response may also contain multiple objects, related to the requested object. 
 
-Authorization endpoint (Authorization code, Implicit grant; redirect_uri needed): <br>`https://stepic.org/oauth2/authorize/.`<br>
+For example: for registered user, response from `https://stepic.org/api/courses` also includes user's course `enrollments`. 
 
-Token endpoint (Authorization code, Password и Client credentials):<br> `https://stepic.org/oauth2/token/`.
+## OAuth 2
 
+In order to call Stepic.org API as a registered uses, you can use this user's OAuth2 keys.
+You can get your keys by creating an application on https://stepic.org/oauth2/applications/ (while being logged in), and you can also set `redirect_uri`, `Client type` and `Authorization grant type` there.
 
-###### Client credentials flow
-You can than obtain access token using this client credential flow:<br>
+Authorization endpoint (Authorization code, Implicit grant; redirect_uri needed): `https://stepic.org/oauth2/authorize/.`
 
- `curl -X POST -d "grant_type=client_credentials" -u"CLIENT_ID:CLIENT_SECRET" https://stepic.org/oauth2/token/`<br>
+Token endpoint (Authorization code, Password и Client credentials): `https://stepic.org/oauth2/token/`.
 
+#### Client credentials flow
+
+You can than obtain access token using the following client credential flow:
+
+`curl -X POST -d "grant_type=client_credentials" -u"CLIENT_ID:CLIENT_SECRET" https://stepic.org/oauth2/token/`<br>
 
 Response: 
 
@@ -70,31 +71,35 @@ Response:
 
 `{"meta": {"page": 1, "has_next": false, "has_previous": false}, "social-accounts": []}`
 
-##### Authorization code flow
+#### Authorization code flow
 
-- Set `grant type = autorization_code` и `redirect_uri` inside aplication;
-- Redirect user to  `https://stepic.org/oauth2/authorize/?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI;
-`
-- User should authenticate or register, and grant permissions to application.;
-- User redirects to `redirect_uri` and sends `CODE`;
+- Set `grant type = autorization_code` and set `redirect_uri` in your aplication;
+- Redirect user to `https://stepic.org/oauth2/authorize/?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI`;
+- User should authenticate or register, and grant permissions to application;
+- It redirects to `redirect_uri` and receives the `CODE`;
 - Application asks for `ACCESS_TOKEN`: `curl -X POST -d "grant_type=authorization_code&code=CODE&redirect_uri=REDIRECT_URI" -u"CLIENT_ID:SECRET_ID" https://stepic.org/oauth2/token/`;
-- Application behaves as user, adds `Authorization: Bearer ACCESS_TOKEN;` to every request
-- Request to `https://stepic.org/api/stepics/1` returns current user.
+- Application behaves as user, adding `Authorization: Bearer ACCESS_TOKEN;` to request headers.
+- Request to `https://stepic.org/api/stepics/1` returns the current user.
 
-##### Registration
+## Registration
+
 Registration endpoint:
 
-`POST /api/users`<br>
-```{"user": {
+`POST /api/users`
+
+```
+{"user": {
   "first_name": "New",
   "last_name": "User",
   "email": "new.user@stepic.org",
   "password": "password",
-}}```
+}}
+```
 
-For registering new user, current session should be not logged in (all non-logged users are `Guests`).<br>
-You should obtain X-CSRFToken from session and use it with registration. Also HTTP request should include `referer` (eg `stepic.org`)
+For registering a new user, current session should belong to a guest (non-logged user). I.e. you should get X-CSRFToken from the session (e.g. open stepic.org and take it from headers) and pass it back during the registration (in request headers). 
+Also HTTP request should include `referer` (e.g. `stepic.org`).
 
+Example:
 ```
 import random
 import sys
@@ -111,25 +116,26 @@ login_data['csrfmiddlewaretoken'] = csrftoken
 login_data['next'] = '/'
 response = client.post(URL, data=login_data, headers=dict(Referer=URL))
 ```
-##### Multiple IDs
-If needed, multiple objects can been asked by ID with one request. Here we asking for courses id = `2`, `67`, `76`, `70`<br>  
-```
-https://stepic.org/api/courses?ids[]=2&ids[]=67&ids[]=76&ids[]=70  …
-```
-Supported by all endpoins.
 
+## Multiple IDs Calls
+
+You can request multiple objects using the single API call by using `?ids[]=2&ids[]=3...`.
+
+For example: to get courses with IDs = `2`, `67`, `76` and `70`; you can to call `https://stepic.org/api/courses?ids[]=2&ids[]=67&ids[]=76&ids[]=70`.
+
+This syntax is supported by all API endpoints.
+
+Don't make calls with large number of ids[0]. Such calls may be rejected by the server because of a large HTTP header.
 
 ## Examples
 
-###### Simple operations:<br>
+#### Simple operations:
 
-- OAuth authorization example: <a href="/examples/oauth_auth_example.py">oauth_auth_example.py</a>
+- OAuth authorization example: [oauth_auth_example.py](/examples/oauth_auth_example.py)
 
+#### Complete examples:
 
-######Complete examples:<br>
-
-- VideoDownloader: <a href="https://github.com/StepicOrg/stepic-oauth2-videodownloader">stepic-oauth2-videodownloader</a>
-
-- iOS app: <a href="https://github.com/StepicOrg/stepic-ios">Stepic iOS app</a>
-
-- Android app: <a href="https://github.com/StepicOrg/stepic-android">Stepic Android app</a>
+* VideoDownloader: [stepic-oauth2-videodownloader](https://github.com/StepicOrg/stepic-oauth2-videodownloader)
+* iOS app: [Stepic iOS app](https://github.com/StepicOrg/stepic-ios)
+* Android app: [Stepic Android app](https://github.com/StepicOrg/stepic-android)
+* Code Challenge submitter: [submitter.py](https://github.com/StepicOrg/SubmissionUtility/blob/master/submitter.py) 
