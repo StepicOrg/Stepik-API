@@ -1,14 +1,10 @@
-[![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs) (all API examples are up to date if the build status is passed)
+# Stepic.org API Readme
 
-# Stepic.org API
+Stepic.org has REST API in JSON format. API endpoints are listed on https://stepic.org/api/docs, and you can also make API call there (but this page is limited to `GET` requests). 
 
-## Overview
+Stepic.org use the same API for its web front-end (JS app) and its iOS/Android applications. Therefore, almost all the platform features are supported in this API.
 
-Stepic.org has REST API in JSON format. 
-
-All the endpoints listed at https://stepic.org/api/docs (you can also try to call API there, but it's limited to `GET` requests).
-
-Stepic.org uses the same API for its web front-end (single-page JS application). Therefore, most of features are supported in the API.
+All API examples are up to date and working iff the build status is `passed`: [![Build Status](https://travis-ci.org/StepicOrg/stepic-api-docs.svg?branch=master)](https://travis-ci.org/StepicOrg/stepic-api-docs) 
 
 ## Flat
 
