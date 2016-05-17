@@ -4,8 +4,7 @@
 import json
 import requests
 
-# parameters here:
-
+# Enter parameters below:
 # 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 client_id = "..."
@@ -24,16 +23,16 @@ token = json.loads(resp.text)['access_token']
 # 3. Call API (https://stepic.org/api/docs/) using this token.
 
 def fetch_object(api_host, obj_class, obj_id):
-	api_url = '{}/api/{}s/{}'.format(api_host, obj_class, obj_id)
-	response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
-	obj = response['{}s'.format(obj_class)][0]
-	return obj
+  api_url = '{}/api/{}s/{}'.format(api_host, obj_class, obj_id)
+  response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
+  obj = response['{}s'.format(obj_class)][0]
+  return obj
 
 def fetch_objects(api_host, obj_class, obj_ids):
-	api_url = '{}/api/{}s?{}'.format(api_host, obj_class, '&'.join('ids[]={}'.format(obj_id) for obj_id in obj_ids))
-	response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
-	objs = response['{}s'.format(obj_class)]
-	return objs
+  api_url = '{}/api/{}s?{}'.format(api_host, obj_class, '&'.join('ids[]={}'.format(obj_id) for obj_id in obj_ids))
+  response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
+  objs = response['{}s'.format(obj_class)]
+  return objs
 
 course = fetch_object(api_host, 'course', course_id)
 
@@ -51,10 +50,10 @@ steps = fetch_objects(api_host, 'step', step_ids)
 f = open('course{}.html'.format(course_id), 'w')
 
 for step in steps:
-	text = step['block']['text']
-	url = '<a href="https://stepic.org/lesson/{}/step/{}">{}</a>'.format(step['lesson'], step['position'], step['id'])
-	f.write('<h1>{}</h1>'.format(url))
-	f.write(text)
-	f.write('<hr>')
+  text = step['block']['text']
+  url = '<a href="https://stepic.org/lesson/{}/step/{}">{}</a>'.format(step['lesson'], step['position'], step['id'])
+  f.write('<h1>{}</h1>'.format(url))
+  f.write(text)
+  f.write('<hr>')
 
 f.close()
