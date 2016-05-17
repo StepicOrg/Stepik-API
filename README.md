@@ -134,4 +134,5 @@ Don't make calls with large number of ids[0]. Such calls may be rejected by the 
 * VideoDownloader: [stepic-oauth2-videodownloader](https://github.com/StepicOrg/stepic-oauth2-videodownloader)
 * iOS app: [Stepic iOS app](https://github.com/StepicOrg/stepic-ios)
 * Android app: [Stepic Android app](https://github.com/StepicOrg/stepic-android)
-* Code Challenge submitter: [submitter.py](https://github.com/StepicOrg/SubmissionUtility/blob/master/submitter.py) 
+* Code Challenge submitter: [submitter.py](https://github.com/StepicOrg/SubmissionUtility/blob/master/submitter.py)
+* Video uploading (C#): [CoursePublishing](https://github.com/okulovsky/CoursePublishing/tree/master/Publishing/Stepic)
