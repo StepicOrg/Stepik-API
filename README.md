@@ -136,3 +136,5 @@ Don't make calls with large number of ids[0]. Such calls may be rejected by the 
 * Android app: [Stepic Android app](https://github.com/StepicOrg/stepic-android)
 * Code Challenge submitter: [submitter.py](https://github.com/StepicOrg/SubmissionUtility/blob/master/submitter.py)
 * Video uploading (C#): [CoursePublishing](https://github.com/okulovsky/CoursePublishing/tree/master/Publishing/Stepic)
+* PyCharm Edu & IntelliJ integration: [intellij-community](https://github.com/JetBrains/intellij-community/tree/7e16c042a19767d5f548c84f88cc5edd5f9d1721/python/educational-core/student/src/com/jetbrains/edu/learning/stepic)
+* IntelliJ Plugin for Code Challenges: [intellij-plugin](https://github.com/StepicOrg/intellij-plugin)
