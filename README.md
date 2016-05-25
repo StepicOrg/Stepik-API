@@ -77,42 +77,6 @@ Response:
 - Application behaves as user, adding `Authorization: Bearer ACCESS_TOKEN;` to request headers.
 - Request to `https://stepic.org/api/stepics/1` returns the current user.
 
-## Registration
-
-Registration endpoint:
-
-`POST /api/users`
-
-```
-{"user": {
-  "first_name": "New",
-  "last_name": "User",
-  "email": "new.user@stepic.org",
-  "password": "password",
-}}
-```
-
-For registering a new user, current session should belong to a guest (non-logged user). I.e. you should get X-CSRFToken from the session (e.g. open stepic.org and take it from headers) and pass it back during the registration (in request headers). 
-Also HTTP request should include `referer` (e.g. `stepic.org`).
-
-Example:
-```
-import random
-import sys
-import requests
-import json
-URL = 'https://stepic.org/accounts/signup/?next=/'
-client = requests.session()
-client.get(URL)
-csrftoken = client.cookies['csrftoken']
-user_email = str(random.randint(10000000, 100000000))+"@gmail.com"
-login_data = dict(first_name=random.randint(10000000, 100000000), last_name=random.randint(10000000, 100000000),
-                  email=user_email, password1='1337hax0r', password2='1337hax0r')
-login_data['csrfmiddlewaretoken'] = csrftoken
-login_data['next'] = '/'
-response = client.post(URL, data=login_data, headers=dict(Referer=URL))
-```
-
 ## Multiple IDs Calls
 
 You can request multiple objects using the single API call by using `?ids[]=2&ids[]=3...`.
