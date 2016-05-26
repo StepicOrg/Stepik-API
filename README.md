@@ -85,7 +85,7 @@ For example: to get courses with IDs = `2`, `67`, `76` and `70`; you can to call
 
 This syntax is supported by all API endpoints.
 
-Don't make calls with large number of ids[0]. Such calls may be rejected by the server because of a large HTTP header.
+Don't make calls with large number of ids[]. Such calls may be rejected by the server because of a large HTTP header.
 
 ## Examples
 
