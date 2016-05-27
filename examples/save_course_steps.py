@@ -29,9 +29,13 @@ def fetch_object(api_host, obj_class, obj_id):
   return obj
 
 def fetch_objects(api_host, obj_class, obj_ids):
-  api_url = '{}/api/{}s?{}'.format(api_host, obj_class, '&'.join('ids[]={}'.format(obj_id) for obj_id in obj_ids))
-  response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
-  objs = response['{}s'.format(obj_class)]
+  objs = []
+  for i in range(0, len(obj_ids), 30): # fetch objects by 30 items, so we won't bump into HTTP request length limits
+    obj_ids_slice = obj_ids[i : i+30]
+    api_url = '{}/api/{}s?{}'.format(api_host, obj_class, '&'.join('ids[]={}'.format(obj_id) for obj_id in obj_ids_slice))
+    print(api_url)
+    response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
+    objs.extend(response['{}s'.format(obj_class)])
   return objs
 
 course = fetch_object(api_host, 'course', course_id)
