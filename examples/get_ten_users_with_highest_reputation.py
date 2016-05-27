@@ -25,18 +25,18 @@ def get_users(tok):
     api_url = 'https://stepic.org/api/users?page=' + str(page);
     result = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer ' + tok}).text)
     while(result['meta']['has_next'] == True):
-        page += 1
         profiles = result['users']
         for profile in profiles:
             reputations.append(profile['reputation'])
             name = profile['first_name'] + " " + profile['last_name']
             logins.append(name)
+            page += 1
             api_url = 'https://stepic.org/api/users?page=' + str(page);
             result = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ tok}).text)
-    return reputations, logins
+    users = [list(c) for c in zip(reputations, logins)]
+    return users
 
-indices, names = get_users(token)
-users = [list(c) for c in zip(indices, names)]
+users = get_users(token)
 users.sort(key=itemgetter(0), reverse=True)
 for i in range(10):
     print(users[i])
