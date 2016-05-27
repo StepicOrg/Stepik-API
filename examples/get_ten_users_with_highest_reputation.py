@@ -10,8 +10,11 @@ from operator import itemgetter
 
 # In[14]:
 
-client_id = "w6MarcVX2yhRZDgTdOqrGr0jR1hbLwMTUXiCSQyU"
-client_secret = "SlfCAqMZCtZlCl1N96zCc4hmQ08IhuzEfzstkXY7LTfgDfGxvo0z6csfPC9aWPPbVV68OLpu3yY4K8EMRBIFeE8mvtsqse3ISmjzn1qasP6c44nx2DdcskliNyFpPngW"
+# Enter parameters below:
+# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# authorization grant type = client credentials)
+client_id = ""
+client_secret = ""
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
