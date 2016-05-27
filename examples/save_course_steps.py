@@ -50,7 +50,7 @@ lessons = fetch_objects(api_host, 'lesson', lesson_ids)
 step_ids = [step for lesson in lessons for step in lesson['steps']]
 steps = fetch_objects(api_host, 'step', step_ids)
 
-f = open('course{}.html'.format(course_id), 'w')
+f = open('course{}.html'.format(course_id), 'w', encoding='utf-8')
 
 for step in steps:
   text = step['block']['text']
