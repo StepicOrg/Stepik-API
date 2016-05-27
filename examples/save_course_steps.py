@@ -50,13 +50,10 @@ lessons = fetch_objects(api_host, 'lesson', lesson_ids)
 step_ids = [step for lesson in lessons for step in lesson['steps']]
 steps = fetch_objects(api_host, 'step', step_ids)
 
-f = open('course{}.html'.format(course_id), 'w', encoding='utf-8')
-
-for step in steps:
-  text = step['block']['text']
-  url = '<a href="https://stepic.org/lesson/{}/step/{}">{}</a>'.format(step['lesson'], step['position'], step['id'])
-  f.write('<h1>{}</h1>'.format(url))
-  f.write(text)
-  f.write('<hr>')
-
-f.close()
+with open('course{}.html'.format(course_id), 'w', encoding='utf-8') as f:
+  for step in steps:
+    text = step['block']['text']
+    url = '<a href="https://stepic.org/lesson/{}/step/{}">{}</a>'.format(step['lesson'], step['position'], step['id'])
+    f.write('<h1>{}</h1>'.format(url))
+    f.write(text)
+    f.write('<hr>')
