@@ -6,10 +6,7 @@ resp = urllib.request.urlopen(req).read().decode('utf-8')
 obj = json.loads(resp)
 courses = obj['courses']
 
-titles = []
-for i in range(len(courses)):
-    titles.append(courses[i]['title'])
-print(titles)
+titles = [course['title'] for course in courses]
 
 x = []
 for k in range(len(titles)):
