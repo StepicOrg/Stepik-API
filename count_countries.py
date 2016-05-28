@@ -1,7 +1,6 @@
 # Run with Python 3
 # Count the number of countries known to Stepic!
 
-import json
 import requests
 
 # Copied from test_examples.py
@@ -13,22 +12,21 @@ resp = requests.post('https://stepic.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
-token = json.loads(resp.text)['access_token']
+token = resp.json()['access_token']
 
 def get_data(page_id):
   api_url = 'https://stepic.org:443/api/countries?page={}'.format(page_id)
-  response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
+  response = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
   return response
 
 count = 0
 page_id = 0
-cur_response = {'countries': [], 'meta': {'has_next': True}}
-fut_response = {'countries': [], 'meta': {'has_next': True}}
+response = {'countries': [], 'meta': {'has_next': True}}
 
-# keep the invariant that we've counted countries up to cur_response including
-while cur_response['meta']['has_next']:
+# loop invariant: we've counted countries up to the current response including
+while response['meta']['has_next']:
   page_id += 1
-  cur_response, fut_response = fut_response, get_data(page_id)
-  count += len(cur_response['countries'])
+  response = get_data(page_id)
+  count += len(response['countries'])
 
 print('Seems like Stepic has knowledge about {} countries. Wow!'.format(count))
