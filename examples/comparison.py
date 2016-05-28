@@ -1,23 +1,29 @@
-import urllib.request
-import json
+import requests
 
-req = urllib.request.Request('https://stepic.org/api/courses')
-resp = urllib.request.urlopen(req).read().decode('utf-8')
-obj = json.loads(resp)
-courses = obj['courses']
 
-titles = [course['title'] for course in courses]
+has_next = True
+page = 0
+titles = []
+while has_next:
+    page += 1
+    url = 'https://stepic.org/api/courses?page={}'.format(page)
+    courses = requests.get(url).json()['courses']
+    has_next = requests.get(url).json()['meta']['has_next']
 
-x = []
-for k in range(len(titles)):
-    if titles[k].find('Python') != (-1):
-        x.append(1)
-    else:
-        x.append(0)
+    page_titles = [course['title'] for course in courses]
+    for title in page_titles:
+        titles.append(title)
 
-if x.count(1) > x.count(0):
+python_titles = 0
+for title in titles:
+    if 'python' in title.lower():
+        python_titles += 1
+
+if python_titles > len(titles) - python_titles:
     a = 'больше'
+elif python_titles == len(titles) - python_titles:
+    a = 'cтолько же'
 else:
     a = 'меньше'
 
-print('Курсов по Python ' + a + ', чем других.')
+print('Курсов по Python {}.'.format(a))
