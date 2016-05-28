@@ -17,8 +17,8 @@ class StepicAPI(object):
             resp = requests.post('https://stepic.org/oauth2/token/',
                          data={'grant_type': 'client_credentials'},
                          auth=auth
-                         )
-            self.token = json.loads(resp.text)['access_token']
+                         ).json()
+            self.token = resp['access_token']
         except:
             print("Error while obtaining token")
       
