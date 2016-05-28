@@ -25,7 +25,7 @@ class StepicAPI(object):
     def get(self, url):
         """ """
         try:
-            resp = json.loads(requests.get(url, headers={'Authorization': 'Bearer ' + self.token}).text)
+            resp = requests.get(url, headers={'Authorization': 'Bearer ' + self.token}).json()
         except:
             print("Error while getting data")
             resp = None
