@@ -1,4 +1,3 @@
-
 import json
 import requests
 
@@ -6,9 +5,10 @@ client_id = "..."
 client_secret = "..."
 
 class StepicAPI(object):
+    
     def __init__(self, client_id, client_secret):
+        """ """
         self.api_url = 'https://stepic.org/api/'
-        
         self.client_id = client_id
         self.client_secret = client_secret
         
@@ -23,33 +23,26 @@ class StepicAPI(object):
             print("Error while obtaining token")
       
     def get(self, url):
+        """ """
         try:
             resp = json.loads(requests.get(url, headers={'Authorization': 'Bearer ' + self.token}).text)
         except:
             print("Error while getting data")
             resp = None
         return resp
-     
-    # announcements
-    def announcements(self, page = 1):
-        url = self.api_url + 'announcements?page=%d'%page 
-        return self.get(url)
-    def announcements_pk(self, pk):
-        url = self.api_url + 'announcements/%d'%pk 
-        return self.get(url)
     
-    # 
     def course_subscriptions(self, page = 1):
-        url = self.api_url + 'course-subscriptions?page=%d'%page
+        url = self.api_url + 'course-subscriptions?page={}'.format(page)
         return self.get(url)
+        
     def course(self, course_id):
-        url = self.api_url + 'courses/%d'%course_id
+        url = self.api_url + 'courses/{}'.format(course_id)
         return self.get(url)
     
         
 sapi = StepicAPI(client_id, client_secret)
-#Пример получения списка курсов
 
+#Example of getting list of user's courses
 has_next = True
 page = 0
 course_ids = []
@@ -62,7 +55,7 @@ while has_next:
 print("pages: %d"%page)    
 print("course ids: %s"%str(course_ids))
 
-#Для каждого курса получим информацию о нем
+#For each course get its info
 data = []
 for course_id in course_ids:
     course_data = sapi.course(course_id)
