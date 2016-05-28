@@ -1,0 +1,25 @@
+# Run with Python 3
+import json
+import requests
+
+# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# authorization grant type = client credentials)
+client_id = "3ciFBCeHKxyHR6wpj9z5WSGTpnrx1ldyAz8claio"
+client_secret = "KyF6aIGzXED1ZrZyOtakEQYssRoqKRSOiIdZ1HkPzoCmtatr6SeVtMIYT7wS3N5wSlUnlkH7jWExCKmjG9QLw4dHVbhNXi8jaqYSI5N0ZC7auLUbvsRaRm2OcpEjG4KO"
+
+# 2. Get a token
+auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
+resp = requests.post('https://stepic.org/oauth2/token/',
+                     data={'grant_type': 'client_credentials'},
+                     auth=auth
+                     )
+token = json.loads(resp.text)['access_token']
+
+# 3. Call API (https://stepic.org/api/docs/) using this token.
+# Example:
+api_url = 'https://stepic.org/api/recommendations'
+course = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
+
+print('Best courses for you: ')
+for i in course['recommendations']:
+    print(i['lesson'])
