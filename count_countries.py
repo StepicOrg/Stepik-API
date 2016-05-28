@@ -22,11 +22,13 @@ def get_data(page_id):
 
 count = 0
 page_id = 0
-response = {'countries': []}
+cur_response = {'countries': [], 'meta': {'has_next': True}}
+fut_response = {'countries': [], 'meta': {'has_next': True}}
 
-while not 'detail' in response:
-  count += len(response['countries'])
+# keep the invariant that we've counted countries up to cur_response including
+while cur_response['meta']['has_next']:
   page_id += 1
-  response = get_data(page_id)
+  cur_response, fut_response = fut_response, get_data(page_id)
+  count += len(cur_response['countries'])
 
 print('Seems like Stepic has knowledge about {} countries. Wow!'.format(count))
