@@ -4,56 +4,54 @@ import requests
 from collections import Counter
 
 
-def get_request(url):
-    return json.loads(requests.get(url, headers={'Authorization': 'Bearer '+ token}).text)
+api_url = 'https://stepic.org/api/'
+
+
+def get_api_requests(topic, pages_max_num=None):
+    result = []
+    page_num = 1
+
+    while True if pages_max_num is None else page_num <= pages_max_num:
+        request_url = (api_url + topic + '?page={}').format(page_num)
+        request_data = json.loads(requests.get(request_url, headers={'Authorization': 'Bearer '+ token}).text)
+        request_result = request_data[topic]
+        result.extend(request_result)
+
+        if not request_data['meta']['has_next']:
+            break
+        else:
+            page_num += 1
+
+    return result
 
 
 def get_recommendation_reactions_lessons_count():
-    recommend_reacs_lessons = []
-    page_num = 1
-
-    while True:
-        recommend_reacs_data = get_request('https://stepic.org/api/recommendation-reactions?page={}'.format(page_num))
-        recommend_reacs = recommend_reacs_data['recommendation-reactions']
-
-        for rec in recommend_reacs:
-            recommend_reacs_lessons.append(rec['lesson'])
-
-        if not recommend_reacs_data['meta']['has_next']:
-            break
-        else:
-            page_num += 1
-
-    return Counter(recommend_reacs_lessons)
+    recommendation_reactions = get_api_requests('recommendation-reactions')
+    recommendation_reactions_lessons = [item['lesson'] for item in recommendation_reactions]
+    return Counter(recommendation_reactions_lessons)
 
 
-def get_top_lesson_titles(top_ids, n):
-    top_lesson_titles_dict = {}
-    lessons_list = []
-    page_num = 1
+def get_top_lessons(recommendations, n, titles=False):
+    sorted_keys = [key for (key, value) in sorted(lessons_top.items(), key=lambda x: x[1], reverse=True)]
 
-    while True:
-        lessons_data = get_request('https://stepic.org/api/lessons?page={}'.format(page_num))
-        lessons = lessons_data['lessons']
+    top_n_keys = sorted_keys[:n]
 
-        for lesson in lessons:
-            lessons_list.append(lesson)
+    if titles:
+        lessons = get_api_requests('lessons')
+        top_lessons_list = []
 
-        if not lessons_data['meta']['has_next']:
-            break
-        else:
-            page_num += 1
+        for id in top_n_keys:
 
-    top_n_ids = [top_ids[idx] for idx in range(n)]
+            for lesson in lessons:
 
-    for id in top_n_ids:
+                if lesson['id'] == id:
+                    top_lessons_list.append((id, lesson['title'], recommendations[id]))
+                    break
 
-        for lesson in lessons_list:
+    else:
+        top_lessons_list = [(id, recommendations[id]) for id in top_n_keys]
 
-            if lesson['id'] == id:
-                top_lesson_titles_dict[id] = lesson['title']
-
-    return top_lesson_titles_dict
+    return top_lessons_list
 
 
 if __name__ == "__main__":
@@ -74,9 +72,7 @@ if __name__ == "__main__":
 
     lessons_top = get_recommendation_reactions_lessons_count()
 
-    sorted_keys = [key for (key, value) in sorted(lessons_top.items(), key=lambda x: x[1], reverse=True)]
-    top_lesson_titles = get_top_lesson_titles(sorted_keys, 10)
+    top_lesson_titles = get_top_lessons(lessons_top, 10)
 
-    for lesson_top_id in top_lesson_titles.keys():
-        print('ID: {0}, title: {1}, #recs: {2}'
-              .format(lesson_top_id, top_lesson_titles[lesson_top_id], lessons_top[lesson_top_id]))
+    for lesson_id, title, num_recs in top_lesson_titles:
+        print('ID: {0}, title: {1}, #recs: {2}'.format(lesson_id, title, num_recs))
