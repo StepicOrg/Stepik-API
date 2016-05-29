@@ -56,9 +56,7 @@ def get_top_lessons(recommendations, n, titles=False):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 3:
-        print("Usage: script_name.py client_id client_secret")
-        exit()
+    assert(len(sys.argv) == 3, "Usage: script_name.py client_id client_secret")
 
     client_id = sys.argv[1]
     client_secret = sys.argv[2]
