@@ -25,8 +25,6 @@ def get_certificates(page_number):
     for i in certificate['certificates']:
         print(i['url'])
 
-        file = requests.get(i['url'])
-
     return certificate['meta']['has_next']
 
 has_next = True
