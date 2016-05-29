@@ -1,7 +1,7 @@
 import requests
 
-client_id = "DnW6cpFMtdeGRz8NwCA0nBSiTdAYgZWAxuMxTM5J"
-client_secret = "Drj7jiO4cmmyZ7BKiQrrXcVqGNCvpH2o3W6c3SRSybeZs2aRGpWeVkcKUssEmqkSOsMUT4Na0hqqqbZxsuj23gOaUCoae6B7WQ4rWl0q3EQymWrm7Xg6YrQP6Y57EU3R"
+client_id = "..."
+client_secret = "..."
 try:
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret);
     resp = requests.post('https://stepic.org/oauth2/token/', data={'grant_type': 'client_credentials'},auth=auth)
