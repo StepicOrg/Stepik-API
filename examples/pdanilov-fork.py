@@ -74,8 +74,9 @@ if __name__ == "__main__":
 
     lessons_top = get_recommendation_reactions_lessons_count()
 
-    top_lesson_titles = get_top_lesson_titles(lessons_top.keys(), 10)
+    sorted_keys = [key for (key, value) in sorted(lessons_top.items(), key=lambda x: x[1], reverse=True)]
+    top_lesson_titles = get_top_lesson_titles(sorted_keys, 10)
 
-    for lesson_top_id in lessons_top.keys():
+    for lesson_top_id in top_lesson_titles.keys():
         print('ID: {0}, title: {1}, #recs: {2}'
               .format(lesson_top_id, top_lesson_titles[lesson_top_id], lessons_top[lesson_top_id]))
