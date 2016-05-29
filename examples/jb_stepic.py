@@ -1,6 +1,5 @@
 import json
 import requests
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -47,7 +46,7 @@ def main():
     # and then displays it. The trend is usually (naturally) declining
     course = 187
     viewed_by = get_all_steps_viewed_by(course)
-    plt.plot(np.array(viewed_by))
+    plt.plot(viewed_by)
     plt.show()
 
 
