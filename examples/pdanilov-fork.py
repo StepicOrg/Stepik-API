@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     lessons_top = get_recommendation_reactions_lessons_count()
 
-    top_lesson_titles = get_top_lessons(lessons_top, 10)
+    top_lesson_titles = get_top_lessons(lessons_top, 10, titles=True)
 
     for lesson_id, title, num_recs in top_lesson_titles:
         print('ID: {0}, title: {1}, #recs: {2}'.format(lesson_id, title, num_recs))
