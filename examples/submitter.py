@@ -17,7 +17,7 @@ stepic_client = None
 
 def exit_util(message):
     """
-    Main program method
+    Main program method 
     """
     click.secho(message, fg="red", bold=True)
     sys.exit(0)
