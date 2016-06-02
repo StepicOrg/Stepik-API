@@ -65,7 +65,7 @@ for i in range(NUM_OF_REACTION_PAGES):
 sorted_lessons = sorted(course_reactons.items(), key=operator.itemgetter(1), reverse=True)
 
 # Add all equal to the last
-while len(sorted_lessons) != NUM_OF_REACTION_TOP and \
+while len(sorted_lessons) > NUM_OF_REACTION_TOP and \
       sorted_lessons[NUM_OF_REACTION_TOP][1] == sorted_lessons[NUM_OF_REACTION_TOP - 1][1]:
     NUM_OF_REACTION_TOP += 1
 
