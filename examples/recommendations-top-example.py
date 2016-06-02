@@ -25,8 +25,8 @@ def get_api_requests(topic, pages_max_num=None):
     return result
 
 
-def get_recommendation_reactions_lessons_count():
-    recommendation_reactions = get_api_requests('recommendation-reactions')
+def get_recommendation_reactions_lessons_count(pages_max_num=None):
+    recommendation_reactions = get_api_requests('recommendation-reactions', pages_max_num)
     recommendation_reactions_lessons = [item['lesson'] for item in recommendation_reactions]
     return Counter(recommendation_reactions_lessons)
 
@@ -54,12 +54,25 @@ def get_top_lessons(recommendations, n, titles=False):
     return top_lessons_list
 
 
+def print_scores(top_lessons, titles=False):
+    for lesson in top_lessons:
+        lesson_id = lesson[0]
+        num_recs = lesson[2] if titles else lesson[1]
+
+        if titles:
+            title = lesson[1]
+            out_str = 'Course-ID: {0}, title: {1}, #recs: {2}'.format(lesson_id, title, num_recs)
+        else:
+            out_str = 'Course-ID: {0}, #recs: {1}'.format(lesson_id, num_recs)
+
+        print(out_str)
+
+
 if __name__ == "__main__":
 
-    assert(len(sys.argv) == 3, "Usage: script_name.py client_id client_secret")
-
-    client_id = sys.argv[1]
-    client_secret = sys.argv[2]
+    client_id = 'cS47zVUpIzIrJUih9Fo10TWh3qTNmHXUXOXiddHE'
+    client_secret = 'skAXXZ96Rq5uOfcbbgEZ1gfdvoTZ4DcoFnMOiKDX90bSp1n9uJACGBeW1Q46WnaOXdA6JPfhnPJay0C890tYsNt4fBzIlWQ' \
+                    'HhjlU1MN5iHYiR0nVpD0DzFdBiOj8a08Y'
 
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
     resp = requests.post('https://stepic.org/oauth2/token/',
@@ -68,9 +81,8 @@ if __name__ == "__main__":
                          )
     token = json.loads(resp.text)['access_token']
 
-    lessons_top = get_recommendation_reactions_lessons_count()
+    lessons_top = get_recommendation_reactions_lessons_count(pages_max_num=50)
 
-    top_lesson_titles = get_top_lessons(lessons_top, 10, titles=True)
+    lessons_top_10 = get_top_lessons(lessons_top, 10)
 
-    for lesson_id, title, num_recs in top_lesson_titles:
-        print('ID: {0}, title: {1}, #recs: {2}'.format(lesson_id, title, num_recs))
+    print_scores(lessons_top_10)
