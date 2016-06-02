@@ -45,7 +45,6 @@ scores = []
 for course in courses:
     scores += [scores_per_course(course)]
     
-%matplotlib inline
 import matplotlib.pyplot as plt
 
 for scr in scores:
@@ -56,4 +55,4 @@ for course in scores:
     final += course
 
 hardest = sorted(final)[0:10]
-print (hardest)
+print(hardest)
