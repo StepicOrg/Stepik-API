@@ -1,5 +1,4 @@
 # Run with Python 3
-import json
 import requests
 from random import randint
 import shutil
@@ -16,9 +15,10 @@ resp = requests.post('https://stepic.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
-token = json.loads(resp.text)['access_token']
+token = resp.json()['access_token']
 
 # 3. Call API (https://stepic.org/api/docs/) using this token.
+
 
 # Get leaders by count
 def get_leaders(count):
@@ -36,7 +36,8 @@ def get_leaders(count):
 # Get user by id
 def get_user(id):
     api_url = 'https://stepic.org/api/users/{}/'.format(id)
-    return json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)['users'][0]
+    return requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()['users'][0]
+
 
 # Download avatar by user id
 def download_avatar(id, filename):
