@@ -1,12 +1,11 @@
 import requests
-import json
 from pprint import pprint
 
 # Enter parameters below:
 # 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
-CLIENT_ID = "..."
-CLIENT_SECRET = "..."
+CLIENT_ID = 'EpD1WiFPSvEXGHDskmdqgEhKt82gKGi6vsiffQWU'
+CLIENT_SECRET = 'RBOIuIoHrKMNtpcE9wS2CPQjqKJOvR9p4AIddFpXwzJLOhEtTNXrZ7bwWIRE5WhKD2zAxBlnrusaNUp4ijxra4oNpVT7FyftVVMsuWoR6A3jYV8SqneoWabnLL4s5M1r'
 API_HOST = 'https://stepic.org'
 
 # 2. Get a token
@@ -15,7 +14,7 @@ RESP = requests.post('https://stepic.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=AUTH
                      )
-TOKEN = json.loads(RESP.text)['access_token']
+TOKEN = RESP.json()['access_token']
 
 
 def prepare_ids(ids):
@@ -33,13 +32,13 @@ def api_call(relative_url):
 
 def get_leaders():
     data = api_call("leaders")
-    return json.loads(data.text)["leaders"]
+    return data.json()["leaders"]
 
 
 def get_users(user_ids):
     request = prepare_ids(user_ids)
     data = api_call("users?{}".format(request))
-    return json.loads(data.text)["users"]
+    return data.json()["users"]
 
 
 def get_social_profiles(social_ids):
@@ -47,7 +46,7 @@ def get_social_profiles(social_ids):
         return None
     request = prepare_ids(social_ids)
     data = api_call("social-profiles?{}".format(request))
-    profiles = json.loads(data.text)["social-profiles"]
+    profiles = data.json()["social-profiles"]
     accounts = {}
     for profile in profiles:
         accounts[profile["provider"]] = profile["url"]
