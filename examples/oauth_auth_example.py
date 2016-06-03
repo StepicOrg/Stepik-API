@@ -20,4 +20,5 @@ if not token:
 api_url = 'https://stepic.org/api/courses/67'
 course = requests.get(api_url,
                       headers={'Authorization': 'Bearer ' + token}).json()
+
 print(course)
