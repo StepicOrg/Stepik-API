@@ -20,7 +20,7 @@ class figure():
         self.figure_matrix.append(['_'] * (self.columns + self.space_for_digits))
         self.figure_matrix.append([' '] * (self.columns + self.space_for_digits))
         for row in self.figure_matrix: row[self.space_for_digits]= '|'
-        f = open('plot.txt', 'w')
+
 
     def scatterplot(self,x_axe, y_axe, name="Plot"):
         if x_axe and y_axe:
@@ -36,7 +36,7 @@ class figure():
                 current_y = y_axe[point]
                 y = round((max_y-current_y)//value_of_bar)
                 x = round(self.space_for_digits+current_x//value_of_unredscore)
-                for i in range (y,25):
+                for i in range (y,26):
                     self.figure_matrix[i][x]='*'
             i=0
             while (max_y>=0):
@@ -65,8 +65,8 @@ It demonstrates how to get lessons data via StepicAPI and why it can be useful.'
 
 # 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
-client_id = "put_urs"
-client_secret = "put_urs"
+client_id = "gFYs8tOONSxogPxxdXg8NTDBu7wEaT72ygNGKFZK"
+client_secret = "IDIg8ZIf8fsT6zWcSRNgNcReRcbF0pKBife0pgDCaHOb2tDRAphGgjkBTHjBb9rfrDAniY13xfmflajoYNLnNVFPtjf8yh4W35lNS0V0mBxdXq49bDZblW1P80fLN5Ov"
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
@@ -84,7 +84,6 @@ lessons = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).jso
 
 lessons_data_frame = pd.DataFrame(lessons['lessons'])
 
-# dataframe to list
 passed = lessons_data_frame['passed_by'].values
 time_to_complete = lessons_data_frame['time_to_complete'].values
 viewed = lessons_data_frame['viewed_by'].values
@@ -95,14 +94,19 @@ viewed = viewed.tolist()
 passed = passed.tolist()
 left = left.tolist()
 
+
+
 for i in range(len(time_to_complete)) :
     if not math.isnan(time_to_complete[i]):
         time_to_complete[i] = round(time_to_complete[i])
     else:
         time_to_complete[i] = 0
+f = open('plot.txt', 'w')
 
-f = figure()
-f.scatterplot(time_to_complete,viewed,"Viewed/Duration of lesson")
-f.scatterplot(time_to_complete,passed,"Passed/Duration of lesson")
-f.scatterplot(time_to_complete,left,"Left/Duration of lesson")
+f1 = figure()
+f1.scatterplot(time_to_complete,viewed,"Viewed/Duration of lesson")
+f2 = figure()
+f2.scatterplot(time_to_complete,passed,"Passed/Duration of lesson")
+f3 = figure()
+f3.scatterplot(time_to_complete,left,"Left/Duration of lesson")
 
