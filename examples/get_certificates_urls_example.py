@@ -26,9 +26,40 @@ def get_certificates(page_number):
 
     return certificate['meta']['has_next']
 
-has_next = True
-page = 1
+# works slow, because data in api/certificates sparsed through pages
+def get_certificate_links():
+    has_next = True
+    page = 1
 
-while(has_next):
-    has_next = get_certificates(page)
-    page += 1
+    while(has_next):
+        has_next = get_certificates(page)
+        page += 1
+
+
+# courses api provides courses without blank pages
+def get_certificates_by_course(links, page_number):
+    api_url = 'https://stepic.org/api/courses?page={}'.format(page_number)
+    courses = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
+
+    for i in courses['courses']:
+        link = i['certificate_link']
+        if link:
+            links.append('https://stepic.org{}'.format(link))
+
+    return courses['meta']['has_next']
+
+
+def print_certificate_links():
+    has_next = True
+    page = 1
+    links = []
+
+    while(has_next):
+        has_next = get_certificates_by_course(links, page)
+        page += 1
+
+    for link in links:
+        print(link)
+
+
+print_certificate_links()
