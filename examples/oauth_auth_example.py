@@ -12,7 +12,13 @@ resp = requests.post('https://stepic.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
-token = resp.json()['access_token']
+respDict = resp.json()
+if (respDict.get('access_token',  "0") == "0"):
+    print("can not auth with this id and secret")
+    exit()
+
+token = respDict['access_token']
+
 
 # 3. Call API (https://stepic.org/api/docs/) using this token.
 # Example:
