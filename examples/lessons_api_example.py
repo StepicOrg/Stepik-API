@@ -14,7 +14,7 @@ class figure():
         self.divider = divider
         for r in range(self.rows): # rows
             self.figure_matrix.append([]) # add empty
-            for c in range(self.columns+self.space_for_digits): # each column n*3+space_for_digits elements
+            for c in range(self.columns+self.space_for_digits): # each column
                 self.figure_matrix[r].append(' ')
             # axes
         self.figure_matrix.append(['_'] * (self.columns + self.space_for_digits))
@@ -31,12 +31,12 @@ class figure():
             value_of_bar = step_y/self.bar_quantity_y
             value_of_unredscore = step_x/self.underscore_quantity_x
 
-            for point in range (len(x_axe)):
+            for point in range(len(x_axe)):
                 current_x = x_axe[point]
                 current_y = y_axe[point]
                 y = round((max_y-current_y)//value_of_bar)
                 x = round(self.space_for_digits+current_x//value_of_unredscore)
-                for i in range (y,26):
+                for i in range(y,26):
                     self.figure_matrix[i][x]='*'
             i=0
             while (max_y>=0):
@@ -65,8 +65,8 @@ It demonstrates how to get lessons data via StepicAPI and why it can be useful.'
 
 # 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
-client_id = "gFYs8tOONSxogPxxdXg8NTDBu7wEaT72ygNGKFZK"
-client_secret = "IDIg8ZIf8fsT6zWcSRNgNcReRcbF0pKBife0pgDCaHOb2tDRAphGgjkBTHjBb9rfrDAniY13xfmflajoYNLnNVFPtjf8yh4W35lNS0V0mBxdXq49bDZblW1P80fLN5Ov"
+client_id = "put_urs"
+client_secret = "put_urs"
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
@@ -94,13 +94,12 @@ viewed = viewed.tolist()
 passed = passed.tolist()
 left = left.tolist()
 
-
-
 for i in range(len(time_to_complete)) :
     if not math.isnan(time_to_complete[i]):
         time_to_complete[i] = round(time_to_complete[i])
     else:
         time_to_complete[i] = 0
+
 f = open('plot.txt', 'w')
 
 f1 = figure()
