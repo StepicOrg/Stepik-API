@@ -4,7 +4,7 @@ import pandas as pd
 import math
 
 
-class figure():
+class Figure():
     def __init__(self, space_for_digits=10, rows=25, columns=120, bar_quantity_y=5, underscore_quantity_x=20,
                  divider=5):
         self.figure_matrix = []
@@ -105,9 +105,9 @@ for i in range(len(time_to_complete)):
 
 f = open('plot.txt', 'w')
 
-f1 = figure()
+f1 = Figure()
 f1.barplot(time_to_complete, viewed, "Viewed/Duration of lesson")
-f2 = figure()
+f2 = Figure()
 f2.barplot(time_to_complete, passed, "Passed/Duration of lesson")
-f3 = figure()
+f3 = Figure()
 f3.barplot(time_to_complete, left, "Left/Duration of lesson")
