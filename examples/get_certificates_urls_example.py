@@ -17,30 +17,30 @@ token = resp.json()['access_token']
 # 3. Call API (https://stepic.org/api/docs/) using this token.
 # Example:
 
-def get_certificates_by_course(links, page_number):
-    api_url = 'https://stepic.org/api/courses?page={}'.format(page_number)
-    courses = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
+def get_user_id():
+    api_url = 'https://stepic.org/api/stepics/1'
+    user = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
+    return user['users'][0]['id']
 
-    for i in courses['courses']:
-        link = i['certificate_link']
-        if link:
-            links.append('https://stepic.org{}'.format(link))
 
-    return courses['meta']['has_next']
+def print_certificates(page_number):
+    id = get_user_id()
+    api_url = 'https://stepic.org/api/certificates?user={}&page={}'.format(id, page_number)
+    certificate = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
+
+    for i in certificate['certificates']:
+        print(i['url'])
+
+    return certificate['meta']['has_next']
 
 
 def print_certificate_links():
     has_next = True
     page = 1
-    links = []
 
     while(has_next):
-        has_next = get_certificates_by_course(links, page)
+        has_next = print_certificates(page)
         page += 1
-
-    for link in links:
-        print(link)
 
 
 print_certificate_links()
-
