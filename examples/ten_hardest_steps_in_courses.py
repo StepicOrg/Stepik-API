@@ -45,10 +45,12 @@ scores = []
 for course in courses:
     scores += [scores_per_course(course)]
     
-import matplotlib.pyplot as plt
-
+import pylab
 for scr in scores:
-    plt.plot([v[0] for v in scr])
+    pylab.plot([v[0] for v in scr])
+
+pylab.show()
+
 
 final = []
 for course in scores: 
