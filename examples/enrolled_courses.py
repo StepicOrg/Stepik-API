@@ -18,7 +18,7 @@ resp = requests.post('https://stepic.org/oauth2/token/',
 token = resp.json()['access_token']
 
 # 3. Call API (https://stepic.org/api/docs/) using this token.
-# Генератор для итерации по страницам
+# Generator definition for iterating over pages
 def list_pages(api_url, obj_class):
     has_next = True
     page = 1
@@ -33,21 +33,21 @@ def list_pages(api_url, obj_class):
         has_next = response['meta']['has_next']
 
 
-# Обращение к любому методу АПИ
+# Access to any API method
 def fetch_object(obj_class, query_string=''):
     api_url = '{}/api/{}{}'.format(api_host, obj_class, query_string)
     response = list_pages(api_url, obj_class)
-    return [obj for page in response for obj in page]       # Пример использования генератора
+    return [obj for page in response for obj in page]       # Example of using generator
 
 
-# Информация по модулям курса
+# Information about course sections
 def get_sections(course_sections):
-    qs = '?ids[]=' + '&ids[]='.join([str(cs) for cs in course_sections])    # Пример запроса с передачей сразу нескольких ID
+    qs = '?ids[]=' + '&ids[]='.join([str(cs) for cs in course_sections])    # Example of multiple IDs call
     sections = fetch_object('sections', qs)
     return sections
 
 
-# Информация по курсам
+# Information about enrolled courses
 def get_enrolled_courses():
     courses = fetch_object('courses', '?enrolled=true')
     for course in courses:
@@ -55,22 +55,22 @@ def get_enrolled_courses():
     return courses
 
 
-# Собственно получение курсов и всей информации по ним
+# Retrieving course information
 courses = get_enrolled_courses()
 
-# И генерация HTML-файла
+# and HTML-report generating
 with open('enrolled_courses.html', 'w', encoding='utf-8') as f:
     f.write('<html>')
     f.write('<head>')
     f.write('<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">')
-    f.write('<title>Курсы, на которые записан пользователь</title>')
+    f.write('<title>Courses enrolled by user</title>')
     f.write('</head>')
     f.write('<body>')
     for course in courses:
         f.write('<h1><a href="https://stepic.org/course/{0}">{1}</a></h1>'.format(course['slug'], course['title']))
         f.write('<p>{}</p>'.format(course['summary']))
         if course['sections']:
-            f.write('<p>Основные модули курса: </p>')
+            f.write('<p>Course sections: </p>')
             f.write('<ul>')
             for section in course['sections']:
                 f.write('<li>{}</li>'.format(section['title']))
