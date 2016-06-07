@@ -5,8 +5,8 @@ import requests
 # Enter parameters below:
 # 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
-client_id = 'Te435vBGNYiPVDluj7XxdPWmv7szZ7kehHwWUvNV'
-client_secret = '24xIaPoPrpZdnWzTQ01D1YnPAPsN9lUsaH1wIYgVLgbwm7oZ0TyX8JKdHtePtsW7tH7KlZmdASoigoQSOiIPbyJYJC9KVlULw8JqIzgiDK9jf7m34jsQb4RWlrMpcDpZ'
+client_id = '...'
+client_secret = '...'
 api_host = 'https://stepic.org'
 
 # 2. Get a token
