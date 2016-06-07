@@ -15,7 +15,9 @@ resp = requests.post('https://stepic.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
-token = resp.json()['access_token']
+token = resp.json().get('access_token')
+if not token:
+    raise RuntimeWarning('Client id/secret is probably incorrect')
 
 
 # 3. Call API (https://stepic.org/api/docs/) using this token.
