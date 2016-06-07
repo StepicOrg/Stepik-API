@@ -17,6 +17,7 @@ resp = requests.post('https://stepic.org/oauth2/token/',
                      )
 token = resp.json()['access_token']
 
+
 # 3. Call API (https://stepic.org/api/docs/) using this token.
 # Generator definition for iterating over pages
 def list_pages(api_url, obj_class):
@@ -27,7 +28,8 @@ def list_pages(api_url, obj_class):
     else:
         connector = '?'
     while has_next:
-        response = requests.get(api_url + '{}page={}'.format(connector, page), headers={'Authorization': 'Bearer ' + token}).json()
+        response = requests.get(api_url + '{}page={}'.format(connector, page), 
+                                headers={'Authorization': 'Bearer ' + token}).json()
         yield response[obj_class]
         page += 1
         has_next = response['meta']['has_next']
