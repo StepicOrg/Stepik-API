@@ -42,7 +42,7 @@ def fetch_object(obj_class, query_string=''):
 
 # Информация по модулям курса
 def get_sections(course_sections):
-    qs = '?ids[]=' + '&ids[]='.join([str(cs) for cs in course_sections])
+    qs = '?ids[]=' + '&ids[]='.join([str(cs) for cs in course_sections])    # Пример запроса с передачей сразу нескольких ID
     sections = fetch_object('sections', qs)
     return sections
 
