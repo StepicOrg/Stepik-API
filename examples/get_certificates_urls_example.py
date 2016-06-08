@@ -23,24 +23,51 @@ def get_user_id():
     return user['users'][0]['id']
 
 
-def print_certificates(page_number):
+def get_certificates(page_number):
     id = get_user_id()
     api_url = 'https://stepic.org/api/certificates?user={}&page={}'.format(id, page_number)
     certificate = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
 
     for i in certificate['certificates']:
-        print(i['url'])
+        links.append(i['url'])
 
     return certificate['meta']['has_next']
 
 
-def print_certificate_links():
+def get_certificate_links():
     has_next = True
     page = 1
 
     while(has_next):
-        has_next = print_certificates(page)
+        has_next = get_certificates(page)
         page += 1
 
 
-print_certificate_links()
+links = []
+get_certificate_links()
+
+
+f = open('certificates.html', 'w', encoding='utf-8')
+
+begin = """<html>
+<head><title> Certificates </title>
+<style>
+   ol {
+    line-height: 1.5;
+   }
+</style>
+</head>
+<body>
+<h1> Certificates </h1>
+<ol>
+"""
+
+end = """</ol>
+</body>
+</html>"""
+
+f.write(begin)
+for url in links:
+    f.write('<li><a href="{}">{}</a></li> \n'.format(url ,url))
+f.write(end)
+f.close()
