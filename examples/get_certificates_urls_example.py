@@ -27,12 +27,12 @@ def get_user_id():
 def get_certificates(page_number):
     user_id = get_user_id()
     api_url = 'https://stepic.org/api/certificates?user={}&page={}'.format(user_id, page_number)
-    certificate = requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).json()
+    page = requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).json()
 
-    for i in certificate['certificates']:
-        links.append(i['url'])
+    for certificate in page['certificates']:
+        links.append(certificate['url'])
 
-    return certificate['meta']['has_next']
+    return page['meta']['has_next']
 
 
 def get_certificate_links():
