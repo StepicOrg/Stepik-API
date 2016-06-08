@@ -47,27 +47,19 @@ def get_certificate_links():
 links = []
 get_certificate_links()
 
-f = open('certificates.html', 'w', encoding='utf-8')
+with open('certificates.html', 'w', encoding='utf-8') as f:
+    f.write('<html> \n')
+    f.write('<head> \n')
+    f.write('<title> Certificates </title> \n')
+    f.write('<style> ol { line-height: 1.5; } </style> \n')
+    f.write('</head> \n')
+    f.write('<body> \n')
+    f.write('<h1> Certificates </h1> \n')
+    f.write('<ol> \n')
 
-begin = """<html>
-<head><title> Certificates </title>
-<style>
-   ol {
-    line-height: 1.5;
-   }
-</style>
-</head>
-<body>
-<h1> Certificates </h1>
-<ol>
-"""
+    for url in links:
+        f.write('<li><a href="{}">{}</a></li> \n'.format(url, url))
 
-end = """</ol>
-</body>
-</html>"""
-
-f.write(begin)
-for url in links:
-    f.write('<li><a href="{}">{}</a></li> \n'.format(url, url))
-f.write(end)
-f.close()
+    f.write('</ol> \n')
+    f.write('</body> \n')
+    f.write('</html> \n')
