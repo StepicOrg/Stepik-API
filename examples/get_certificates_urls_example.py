@@ -17,16 +17,17 @@ token = resp.json()['access_token']
 # 3. Call API (https://stepic.org/api/docs/) using this token.
 # Example:
 
+
 def get_user_id():
     api_url = 'https://stepic.org/api/stepics/1'
-    user = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
+    user = requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).json()
     return user['users'][0]['id']
 
 
 def get_certificates(page_number):
-    id = get_user_id()
-    api_url = 'https://stepic.org/api/certificates?user={}&page={}'.format(id, page_number)
-    certificate = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
+    user_id = get_user_id()
+    api_url = 'https://stepic.org/api/certificates?user={}&page={}'.format(user_id, page_number)
+    certificate = requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).json()
 
     for i in certificate['certificates']:
         links.append(i['url'])
@@ -38,14 +39,13 @@ def get_certificate_links():
     has_next = True
     page = 1
 
-    while(has_next):
+    while has_next:
         has_next = get_certificates(page)
         page += 1
 
 
 links = []
 get_certificate_links()
-
 
 f = open('certificates.html', 'w', encoding='utf-8')
 
@@ -68,6 +68,6 @@ end = """</ol>
 
 f.write(begin)
 for url in links:
-    f.write('<li><a href="{}">{}</a></li> \n'.format(url ,url))
+    f.write('<li><a href="{}">{}</a></li> \n'.format(url, url))
 f.write(end)
 f.close()
