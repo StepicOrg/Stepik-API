@@ -3,10 +3,8 @@ import requests
 import matplotlib.pyplot as plt
 
 
-client_id = "mD7Vj1eRhl2i4xlz1jYqeG8d8LUGARgrqmd57Z9L"
-client_secret = "zHXCSwWJNMKOIdpQg6RVTWDBPMJsBmIqXHrA1ISAgDr1p4MqV0325Unf2H" \
-                "z8Z9DOIZDtQx8t533XCEwiRsgrhMEQOqJOiVEeGDbDGrT59H70asqCx6jW" \
-                "6waPNqQ9WNJi"
+client_id = "..."
+client_secret = "..."
 
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
 resp = requests.post('https://stepic.org/oauth2/token/',

@@ -41,4 +41,3 @@ for user_id,titles in author_courses.items():
         print('these courses:')
     for title in titles:
         print(title)
-

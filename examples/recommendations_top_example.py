@@ -70,9 +70,8 @@ def print_scores(top_lessons, titles=False):
 
 if __name__ == "__main__":
 
-    client_id = 'cS47zVUpIzIrJUih9Fo10TWh3qTNmHXUXOXiddHE'
-    client_secret = 'skAXXZ96Rq5uOfcbbgEZ1gfdvoTZ4DcoFnMOiKDX90bSp1n9uJACGBeW1Q46WnaOXdA6JPfhnPJay0C890tYsNt4fBzIlWQ' \
-                    'HhjlU1MN5iHYiR0nVpD0DzFdBiOj8a08Y'
+    client_id = "..."
+    client_secret = "..."
 
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
     resp = requests.post('https://stepic.org/oauth2/token/',

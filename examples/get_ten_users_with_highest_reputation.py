@@ -6,8 +6,8 @@ from operator import itemgetter
 # Enter parameters below:
 # 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
-client_id = ""
-client_secret = ""
+client_id = "..."
+client_secret = "..."
 
 class Getter(object):
     def __init__(self, client_id, secret_id):
