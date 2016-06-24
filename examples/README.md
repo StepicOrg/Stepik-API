@@ -5,8 +5,7 @@
 |[`download_random_leader_avatar.py`](download_random_leader_avatar.py)|Get leader user randomly from 100 leaders and download his avatar.|
 |[`get_certificates_urls_example.py`](get_certificates_urls_example.py)|Create HTML file with all user certificates.|
 |[`get_countries_all_count`](get_countries_all_count.py)|Count the number of countries known. Another example of how to use multiple api pages if size of response is unknown.|
-|[`get_courses_authors.py`](get_courses_authors.py)|Get list of all courses and create list of authors, ever involved in course creation process.
-Then print data aggregated by author name.|
+|[`get_courses_authors.py`](get_courses_authors.py)|Get list of all courses and create list of authors, ever involved in course creation process.Then print data aggregated by author name.|
 |[`get_courses_by_params.py`](get_courses_by_params.py)|Select active courses by specifing parameters such as: amount of units, language, number of overall discussions.|
 |[`get_enrolled_courses.py`](get_enrolled_courses.py)|Generate HTML-report with all enrolled courses for user. Example of using multiple IDs in one API call.|
 |[`get_info_all_courses_titles.py`](get_info_all_courses_titles.py)|Receive all courses titles and count courses with "Python" word in title.|
