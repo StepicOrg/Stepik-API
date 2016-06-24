@@ -1,6 +1,6 @@
 #Examples overview
 
-|name|desc|
+|example|description|
 |---|---|
 |[`download_random_leader_avatar.py`](download_random_leader_avatar.py)|Get leader user randomly from 100 leaders and download his avatar.|
 |[`get_certificates_urls_example.py`](get_certificates_urls_example.py)|Create HTML file with all user certificates.|
