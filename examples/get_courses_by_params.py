@@ -7,7 +7,7 @@ def get_token():
     client_secret = "..."
 
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-    resp = requests.post('https://stepic.org/oauth2/token/',
+    resp = requests.post('https://stepik.org/oauth2/token/',
                          data={'grant_type': 'client_credentials'},
                          auth=auth)
     token = json.loads(resp.text)['access_token']
@@ -15,7 +15,7 @@ def get_token():
 
 
 def get_data(pageNum):
-    api_url = 'https://stepic.org/api/courses?page={}'.format(pageNum)
+    api_url = 'https://stepik.org/api/courses?page={}'.format(pageNum)
     course = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer ' + get_token()}).text)
     return course
 

@@ -3,15 +3,15 @@ import requests
 from pprint import pprint
 
 # Enter parameters below:
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 CLIENT_ID = '...'
 CLIENT_SECRET = '...'
-API_HOST = 'https://stepic.org'
+API_HOST = 'https://stepik.org'
 
 # 2. Get a token
 AUTH = requests.auth.HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET)
-RESP = requests.post('https://stepic.org/oauth2/token/',
+RESP = requests.post('https://stepik.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=AUTH
                      )

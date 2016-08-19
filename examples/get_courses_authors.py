@@ -4,11 +4,11 @@ client_id = "..."
 client_secret = "..."
 try:
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret);
-    resp = requests.post('https://stepic.org/oauth2/token/', data={'grant_type': 'client_credentials'},auth=auth)
+    resp = requests.post('https://stepik.org/oauth2/token/', data={'grant_type': 'client_credentials'},auth=auth)
     token = resp.json()['access_token']
 except:
     print('problems getting token')
-api_url = "https://stepic.org/api/";
+api_url = "https://stepik.org/api/";
 
 author_courses = {}
 page_ind = 1

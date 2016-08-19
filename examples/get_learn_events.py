@@ -3,14 +3,14 @@ import re
 import json
 import requests
 
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 client_id = "..."
 client_secret = "..."
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-resp = requests.post('https://stepic.org/oauth2/token/',
+resp = requests.post('https://stepik.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
@@ -20,7 +20,7 @@ token = json.loads(resp.text)['access_token']
 page = 1
 events = []
 while True:
-	api_url = 'https://stepic.org/api/events?type=learn' + '&page=' + str(page)
+	api_url = 'https://stepik.org/api/events?type=learn' + '&page=' + str(page)
 	data = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
 	events += data['events']
 	if not data['meta']['has_next']:

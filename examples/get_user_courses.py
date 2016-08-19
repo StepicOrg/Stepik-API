@@ -5,23 +5,23 @@ client_id = "..."
 client_secret = "..."
 
 class StepicAPI(object):
-    
+
     def __init__(self, client_id, client_secret):
         """ """
-        self.api_url = 'https://stepic.org/api/'
+        self.api_url = 'https://stepik.org/api/'
         self.client_id = client_id
         self.client_secret = client_secret
-        
+
         try:
             auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-            resp = requests.post('https://stepic.org/oauth2/token/',
+            resp = requests.post('https://stepik.org/oauth2/token/',
                          data={'grant_type': 'client_credentials'},
                          auth=auth
                          ).json()
             self.token = resp['access_token']
         except:
             print("Error while obtaining token")
-      
+
     def get(self, url):
         """ """
         try:
@@ -30,16 +30,16 @@ class StepicAPI(object):
             print("Error while getting data")
             resp = None
         return resp
-    
+
     def course_subscriptions(self, page = 1):
         url = self.api_url + 'course-subscriptions?page={}'.format(page)
         return self.get(url)
-        
+
     def course(self, course_id):
         url = self.api_url + 'courses/{}'.format(course_id)
         return self.get(url)
-    
-        
+
+
 sapi = StepicAPI(client_id, client_secret)
 
 #Example of getting list of user's courses
@@ -52,7 +52,7 @@ while has_next:
     has_next = courses['meta']['has_next']
     for el in courses['course-subscriptions']:
         course_ids.append(el['course'])
-print("pages: %d"%page)    
+print("pages: %d"%page)
 print("course ids: %s"%str(course_ids))
 
 #For each course get its info

@@ -2,7 +2,7 @@ import requests
 
 
 def top_lessons_json(page):
-    return requests.get("https://stepic.org:443/api/top-lessons?page={}".format(page)).json()
+    return requests.get("https://stepik.org:443/api/top-lessons?page={}".format(page)).json()
 
 
 def top_lessons_indices():
@@ -24,7 +24,7 @@ def top_lessons_indices():
 
 
 def lesson_info(idx):
-    r = requests.get("https://stepic.org:443/api/lessons/{}".format(idx)).json()
+    r = requests.get("https://stepik.org:443/api/lessons/{}".format(idx)).json()
     lesson = r["lessons"][0]
 
     return lesson["title"], lesson["viewed_by"], lesson["passed_by"]

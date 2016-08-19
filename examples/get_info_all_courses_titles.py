@@ -6,7 +6,7 @@ page = 0
 titles = []
 while has_next:
     page += 1
-    url = 'https://stepic.org/api/courses?page={}'.format(page)
+    url = 'https://stepik.org/api/courses?page={}'.format(page)
     courses = requests.get(url).json()['courses']
     has_next = requests.get(url).json()['meta']['has_next']
 

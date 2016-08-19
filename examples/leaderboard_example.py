@@ -1,9 +1,9 @@
 import requests
 import grequests
 
-r = requests.get("https://stepic.org/api/leaders")  # get the first page of leader list
+r = requests.get("https://stepik.org/api/leaders")  # get the first page of leader list
 
-leaders = ["https://stepic.org/api/users/" + str(leader["user"])
+leaders = ["https://stepik.org/api/users/" + str(leader["user"])
            for leader in r.json()["leaders"]]  # form urls for leaders
 
 scores = {l["user"]: l["score"] for l in r.json()["leaders"]}  # remember all scores

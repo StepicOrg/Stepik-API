@@ -4,7 +4,7 @@ import requests
 
 token = "..."
 
-api_url = 'https://stepic.org/api/stepics/1'
+api_url = 'https://stepik.org/api/stepics/1'
 resp = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
 
 user = resp['users']

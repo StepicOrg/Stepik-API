@@ -8,14 +8,14 @@ client_id = "..."
 client_secret = "..."
 
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-resp = requests.post('https://stepic.org/oauth2/token/',
+resp = requests.post('https://stepik.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
 token = resp.json()['access_token']
 
 def get_data(page_id):
-  api_url = 'https://stepic.org:443/api/countries?page={}'.format(page_id)
+  api_url = 'https://stepik.org:443/api/countries?page={}'.format(page_id)
   response = requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()
   return response
 

@@ -5,7 +5,7 @@ import operator
 import requests
 import urllib
 
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 client_id = "..."
 client_secret = "..."
@@ -13,7 +13,7 @@ client_secret = "..."
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
 resp = requests.post(
-    'https://stepic.org/oauth2/token/',
+    'https://stepik.org/oauth2/token/',
     data={'grant_type': 'client_credentials'},
     auth=auth
 )
@@ -25,11 +25,11 @@ if not token:
     exit(0)
 
 
-# 3. Call API (https://stepic.org/api/docs/) using this token.
+# 3. Call API (https://stepik.org/api/docs/) using this token.
 # Example:
 
 def load_api(method, **kwargs):
-    api_url = 'https://stepic.org:443/api/'
+    api_url = 'https://stepik.org:443/api/'
     params = urllib.parse.urlencode(kwargs)
     return json.loads(requests.get(
         api_url + method + '/?' + params,

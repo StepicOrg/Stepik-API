@@ -4,7 +4,7 @@ import requests
 from collections import Counter
 
 
-api_url = 'https://stepic.org/api/'
+api_url = 'https://stepik.org/api/'
 
 
 def get_api_requests(topic, pages_max_num=None):
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     client_secret = "..."
 
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-    resp = requests.post('https://stepic.org/oauth2/token/',
+    resp = requests.post('https://stepik.org/oauth2/token/',
                          data={'grant_type': 'client_credentials'},
                          auth=auth
                          )

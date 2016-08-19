@@ -4,7 +4,7 @@ import requests
 from operator import itemgetter
 
 # Enter parameters below:
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 client_id = "..."
 client_secret = "..."
@@ -13,10 +13,10 @@ class Getter(object):
     def __init__(self, client_id, secret_id):
         self.client_id = client_id
         self.secret_id = secret_id
-        self.url = 'https://stepic.org/api/'
+        self.url = 'https://stepik.org/api/'
         try:
             auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-            resp = requests.post('https://stepic.org/oauth2/token/',
+            resp = requests.post('https://stepik.org/oauth2/token/',
                          data={'grant_type': 'client_credentials'},
                          auth=auth
                          ).json()

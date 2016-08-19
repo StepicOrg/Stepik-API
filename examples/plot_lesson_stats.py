@@ -4,7 +4,7 @@ import pandas as pd
 import math
 import copy
 
-'''This example demonstrates how to get lessons data via Stepic-API and why it can be useful.'''
+'''This example demonstrates how to get lessons data via Stepik-API and why it can be useful.'''
 
 '''We download lessons' data one by one,
  then we make plots to see how much the loss of the people depends on the lesson time '''
@@ -22,7 +22,7 @@ setting_css_style = '<style> \nli { float:left; width: 49%; } \nbr { clear: left
 start_lesson_id = 1
 finish_lesson_id = 100
 
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 client_id = "..."
 client_secret = "..."
@@ -30,7 +30,7 @@ client_secret = "..."
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-resp = requests.post('https://stepic.org/oauth2/token/',
+resp = requests.post('https://stepik.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
@@ -147,7 +147,7 @@ def introduce_lessons_in_html(start, finish, json_of_lessons, html_file='lessons
         f.write('<big>{}</big><ol>\n'.format(welcome_message.format(start, finish)))
         for lesson in json_of_lessons:
             if lesson['is_public']:
-                url = '<a href="https://stepic.org/lesson/{}">{}</a>'.format(lesson['slug'], lesson["title"])
+                url = '<a href="https://stepik.org/lesson/{}">{}</a>'.format(lesson['slug'], lesson["title"])
                 f.write('<li>{}</li>\n'.format(url))
             else:
                 f.write('<li>{}</li> \n'.format(lesson['title']))
@@ -155,7 +155,7 @@ def introduce_lessons_in_html(start, finish, json_of_lessons, html_file='lessons
         f.close()
 
 
-# 3. Call API (https://stepic.org/api/docs/) using this token.
+# 3. Call API (https://stepik.org/api/docs/) using this token.
 # Example:
 def get_lessons_from_n_to_m(from_n, to_m, current_token):
     """
@@ -164,7 +164,7 @@ def get_lessons_from_n_to_m(from_n, to_m, current_token):
     :param current_token: token given by API
     :return: json object with all existing lessons with id from from_n to to_m
     """
-    api_url = 'https://stepic.org/api/lessons/'
+    api_url = 'https://stepik.org/api/lessons/'
     json_of_n_lessons = []
     for n in range(from_n, to_m + 1):
         try:
