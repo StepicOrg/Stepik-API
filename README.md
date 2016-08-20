@@ -1,4 +1,4 @@
-# stepik.org API Readme
+# Stepik.org API Readme
 
 Stepik.org has REST API in JSON format. API endpoints are listed on https://stepik.org/api/docs, and you can also make API call there (but this page is limited to `GET` requests).
 
