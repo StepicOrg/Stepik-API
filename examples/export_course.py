@@ -68,9 +68,9 @@ for section in sections:
         for step in steps:
             step_source = fetch_object('step-source', step['id'])
             path = [
-                '{} {}'.format(str(course['id']).zfill(2), course['title']), 
-                '{} {}'.format(str(section['position']).zfill(2), section['title']), 
-                '{} {}'.format(str(unit['position']).zfill(2), lesson['title']), 
+                '{} {}'.format(str(course['id']).zfill(2), course['title']),
+                '{} {}'.format(str(section['position']).zfill(2), section['title']),
+                '{} {}'.format(str(unit['position']).zfill(2), lesson['title']),
                 '{}_{}_{}.step'.format(lesson['id'], str(step['position']).zfill(2), step['block']['name'])
                 ]
             try:
