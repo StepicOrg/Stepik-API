@@ -2,6 +2,7 @@ import matplotlib as plt
 import pandas as pd
 import time
 import datetime
+import numpy as np
 
 from api import fetch_objects, fetch_objects_by_id, fetch_objects_by_pk
 
