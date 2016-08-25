@@ -1,7 +1,13 @@
-from .functions import get_drop_out_plot
+import argparse
 
-# select a course by id
-course_id = 512
+from functions import get_drop_out_plot
 
-# make a final plot
-get_drop_out_plot(course_id)
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--course', type=int)
+args = parser.parse_args()
+
+if args.course:
+    course_id = args.course
+
+    # make a final plot
+    get_drop_out_plot(course_id)

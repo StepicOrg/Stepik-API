@@ -1,9 +1,9 @@
-import pandas as pd
-from .api import fetch_objects
-from .api import fetch_objects_by_id
-from .api import fetch_objects_by_pk
-import time
 import matplotlib as plt
+import pandas as pd
+import time
+
+from api import fetch_objects, fetch_objects_by_id, fetch_objects_by_pk
+
 plt.use("pgf")
 pgf_with_custom_preamble = {
     "text.usetex": True,
@@ -164,15 +164,14 @@ def get_drop_out_plot(course_id):
 
     plt.gcf().subplots_adjust(bottom=0.30)
 
-    figtext(.02, 0.2, "На данном графике каждый шаг (step_id) характеризается двумя параметрами. \
-                       Обратите внимание, если вы нажмете на id шага, то перейдете на этот шаг в курсе.")
+    figtext(.02, 0.2, "Please note that each step id on the x axis is a clicable link")
     figtext(.02, 0.18,
-            "Красные столбики поуже Users left - число человек, покинувших курс на данном шаге. \
-             Точное число отложено по правой вертикальной оси.", color="red")
+            "Red bars Users left are number of users who left the course from that step. \
+             The exact number is shown on the red y axis.", color="red")
 
     figtext(.02, 0.16,
-            "Синие столбики Difficulty - сложность шага (1 - success rate).\
-            Точное значение отложено по левой вертикальной оси.", color="blue")
+            "Blue bars are step's difficulty (1 - success rate).\
+             The exact number is shown on the blue y axis.", color="blue")
 
     fig.savefig('{course_name} {id}.pdf'.format(course_name=course_name, id=course_id))
 

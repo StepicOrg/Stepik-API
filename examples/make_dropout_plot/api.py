@@ -8,7 +8,7 @@ from urllib.parse import urlencode
 # 1. Get your keys at https://stepik.org/oauth2/applications/
 # (client type = confidential, authorization grant type = client credentials)
 # See: ./api_secret/api_secret_template.py
-from .api_secret.api_secret_template import CLIENT_ID, CLIENT_SECRET
+from api_secret.api_secret_template import CLIENT_ID, CLIENT_SECRET
 
 API_URL = 'https://stepik.org/api/{}'
 API_HOST = 'https://stepik.org'
