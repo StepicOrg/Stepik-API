@@ -77,7 +77,6 @@ def get_drop_out_plot(course_id):
     if not pd.isnull(course_structure.begin_date).any():
         course_structure["begin_date"] = list(map(get_unix_date, course_structure.begin_date))
 
-    course = fetch_objects_by_id('courses', course_id)[0]
     course_name = course["title"]
     certificate_threshold = course["certificate_regular_threshold"]
     # number_of_weeks = len(course["sections"])
