@@ -4,7 +4,7 @@ import time
 import datetime
 import numpy as np
 
-from api import fetch_objects, fetch_objects_by_id, fetch_objects_by_pk
+from api import fetch_objects, fetch_objects_by_id, fetch_objects_by_pk, get_token
 
 plt.use("pgf")
 pgf_with_custom_preamble = {
@@ -24,17 +24,18 @@ def get_unix_date(date):
 
 
 def get_drop_out_plot(course_id):
-    course = fetch_objects_by_id('courses', course_id)[0]
+    token = get_token()
+    course = fetch_objects_by_id('courses', course_id, token=token)[0]
     sections = fetch_objects('sections', id=course['sections'])
 
     unit_ids = [unit for section in sections for unit in section['units']]
-    units = fetch_objects('units', id=unit_ids)
+    units = fetch_objects('units', token=token, id=unit_ids)
 
     lesson_ids = [unit['lesson'] for unit in units]
-    lessons = fetch_objects('lessons', id=lesson_ids)
+    lessons = fetch_objects('lessons', token=token,  id=lesson_ids)
 
     step_ids = [step for lesson in lessons for step in lesson['steps']]
-    steps = fetch_objects('steps', id=step_ids)
+    steps = fetch_objects('steps', token=token, id=step_ids)
     step_id = [step['id'] for step in steps]
     step_position = [step['position'] for step in steps]
     step_type = [step["block"]["name"]for step in steps]
@@ -81,14 +82,13 @@ def get_drop_out_plot(course_id):
 
     course_name = course["title"]
     certificate_threshold = course["certificate_regular_threshold"]
-    # number_of_weeks = len(course["sections"])
     begin_date = get_unix_date(course["begin_date"])
     last_deadline = get_unix_date(course["last_deadline"])
     course_teachers = course["instructors"]
-    course_testers = fetch_objects_by_pk("groups", course["testers_group"])[0]["users"]
+    course_testers = fetch_objects_by_pk("groups", course["testers_group"], token=token)[0]["users"]
     users_to_delete = course_teachers + course_testers
 
-    grades = fetch_objects('course-grades', course=course_id)
+    grades = fetch_objects('course-grades', token=token, course=course_id)
     learners = pd.DataFrame({"user_id": [user["user"] for user in grades],
                              "total": [user["score"] for user in grades],
                              "data_joined": [user["date_joined"] for user in grades]})
@@ -103,7 +103,7 @@ def get_drop_out_plot(course_id):
     for learner in learners.user_id:
         step_data = pd.DataFrame()
         for step in course_structure.step_id:
-            step_submissions = fetch_objects('submissions', step=step, user=learner)
+            step_submissions = fetch_objects('submissions', token=token, step=step, user=learner)
             submissions_data = pd.DataFrame()
             for submission in step_submissions:
                 current_submission = pd.DataFrame({"step_id": [step],

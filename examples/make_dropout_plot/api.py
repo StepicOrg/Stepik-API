@@ -17,27 +17,30 @@ API_HOST = 'https://stepik.org'
 # 2. Get a token
 def get_token(client_id=CLIENT_ID, client_secret=CLIENT_SECRET):
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-    resp = requests.post('https://stepik.org/oauth2/token/', data={'grant_type': 'client_credentials'}, auth=auth)
-    token = json.loads(resp.text)['access_token']
+    response = requests.post('{}/oauth2/token/'.format(API_HOST), data={'grant_type': 'client_credentials'}, auth=auth)
+    # status code should be 200 (HTTP OK)
+    assert(response.status_code == 200)
+    token = json.loads(response.text)['access_token']
     return token
 
 
 # 3. Call API (https://stepik.org/api/docs/) using this token.
-def get_api_response(api_url, token=get_token()):
-    response = requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).text
+def get_api_response(api_url, token=None):
+    if not token:
+        token = get_token()
+    response = requests.get(api_url, headers={'Authorization': 'Bearer ' + token})
+    # status code should be 200 (HTTP OK)
+    assert (response.status_code == 200)
 
-    try:
-        response_json = json.loads(response)
-    except json.decoder.JSONDecodeError:
-        # if HTML, not JSON returned (e.g., pages with error 404 or 500)
-        response_json = json.loads('{}')
-
-    return response_json
+    return response.json()
 
 
 # Additional API functions
 
-def fetch_objects_by_id(object_name, object_id, token=get_token()):
+def fetch_objects_by_id(object_name, object_id, token=None):
+    if not token:
+        token = get_token()
+
     if type(object_id) is not list:
         # if it is a scalar, we create an one-element list
         object_id = [object_id]
@@ -50,21 +53,24 @@ def fetch_objects_by_id(object_name, object_id, token=get_token()):
         obj_ids_slice = object_id[i:i + slice_size]
         api_url = '{}/api/{}?{}'.format(
             API_HOST, object_name, '&'.join('ids[]={}'.format(obj_id) for obj_id in obj_ids_slice))
-        response = requests.get(api_url,
-                                headers={'Authorization': 'Bearer ' + token}
-                                ).json()
+        response = get_api_response(api_url, token)
         objects_from_api += response[object_name]
     return objects_from_api
 
 
-def fetch_objects_by_pk(object_name, object_pk, token=get_token()):
+def fetch_objects_by_pk(object_name, object_pk, token=None):
+    if not token:
+        token = get_token()
     api_url = '{}/api/{}/{}'.format(API_HOST, object_name, object_pk)
     response = get_api_response(api_url, token)
     objects_from_api = response[object_name]
     return objects_from_api
 
 
-def fetch_objects(object_name, token=get_token(), **kwargs):
+def fetch_objects(object_name, token=None, **kwargs):
+    if not token:
+        token = get_token()
+
     if 'pk' in kwargs:
         # fetch objects by pk
         return fetch_objects_by_pk(object_name, kwargs['pk'], token)
@@ -85,7 +91,7 @@ def fetch_objects(object_name, token=get_token(), **kwargs):
             api_url = '{}/api/{}?{}'.format(API_HOST, object_name, query)
 
             response = get_api_response(api_url, token)
-            if 'meta' not in response:
+            if object_name not in response:
                 # if not success (e.g., error 404), then return collected objects
                 return objects_from_api
 
