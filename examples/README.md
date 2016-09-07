@@ -21,6 +21,7 @@
 |[`oauth_auth_example.py`](oauth_auth_example.py)|Example of OAuth authentification, used pretty all around all other examples.|
 |[`plot_course_viewed_by.py`](plot_course_viewed_by.py)|Script gets view statistics for all of the steps in some course and then displays it. The trend is usually (naturally) declining. By default uses course 187.|
 |[`plot_lesson_stats.py`](plot_lesson_stats.py)|Generates HTML, download lessons' data one by one, then we make plots to see how much the loss of the people depends on the lesson time.|
+|[`popular_courses.py`](popular_courses.py)| Calculate sum of all enrollments for popular courses.|
 |[`recommendations_top_example.py`](recommendations_top_example.py)|Prints list of top 10 recommended lessons for user. Warning! Get list of ALL lessons from stepik, so it might take a long time.|
 |[`save_course_steps.py`](save_course_steps.py)|Saves all step texts from course into single HTML file. Example of using multiple IDs in one API call.|
 |[`top_lessons_to_html.py`](top_lessons_to_html.py)|Generate HTML with top lessons sorted by number of views.|
