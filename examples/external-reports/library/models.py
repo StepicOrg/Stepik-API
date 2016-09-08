@@ -3,11 +3,11 @@ import shutil
 import os
 import pandas as pd
 
-from api import API_HOST, fetch_objects
-from settings import ITEM_FORMAT, OPTION_FORMAT
-from utils import (html2latex, create_answer_matrix, get_course_structure,
-                   get_course_submissions, get_step_options,
-                   get_item_statistics, get_question, process_step_url, process_options_with_name)
+from library.api import API_HOST, fetch_objects
+from library.settings import ITEM_FORMAT, OPTION_FORMAT
+from library.utils import (html2latex, create_answer_matrix, get_course_structure,
+                           get_course_submissions, get_step_options,
+                           get_item_statistics, get_question, process_step_url, process_options_with_name)
 
 
 class ExternalCourseReport:

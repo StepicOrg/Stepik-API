@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 # 1. Get your keys at https://stepik.org/oauth2/applications/
 # (client type = confidential, authorization grant type = client credentials)
 # and write them to api_keys.py
-from api_keys import API_HOST, CLIENT_ID, CLIENT_SECRET
+from library.api_keys import API_HOST, CLIENT_ID, CLIENT_SECRET
 
 
 # 2. Get a token
