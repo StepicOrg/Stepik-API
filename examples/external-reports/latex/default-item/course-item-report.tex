@@ -1,0 +1,27 @@
+\documentclass[12pt]{report} 
+\usepackage{stepic} 
+\usepackage{ifsym}
+
+\input{generated/info}
+
+\title{Анализ заданий по~курсу}
+\subtitle{<<\coursetitle>>}
+\cover{cover.eps}
+\addcoursetexttointro{в курсе \textbf{<<\coursetitle>>} (\url{\courseurl})}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\input{common/introduction}
+
+\chapter{Анализ заданий}
+\input{common/methodology}
+
+\parindent=0pt
+\input{generated/map}
+
+
+\end{document}
