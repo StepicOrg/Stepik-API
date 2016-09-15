@@ -15,6 +15,7 @@ Get your keys at https://stepik.org/oauth2/applications/
 
 # Usage 
 
+## Item Report
 To build the item report for course with course_id, you should launch in the command line.
 
     python item_report.py --course course_id
@@ -26,3 +27,15 @@ or
 Report will be put in ``./pdf/course-{course_id}-item-report.pdf``
 
 **Note:** Since course submissions can be extremely large, it it recommended to put the file ``course-{course_id}-submissions.csv`` in the folder ``./cache/``
+
+
+## Video Report
+To build the video report for course with course_id, you should launch in the command line.
+
+    python video_report.py --course course_id
+
+or
+
+    python video_report.py -c course_id
+    
+Report will be put in ``./pdf/course-{course_id}-video-report.pdf``
