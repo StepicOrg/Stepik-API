@@ -259,6 +259,7 @@ def get_video_stats(step_id, cached=True, token=None):
 
     if not stats.empty:
         stats.to_csv(cached_name, index=False)
+        stats = pd.read_csv(cached_name)
     return stats
 
 
@@ -275,6 +276,7 @@ def get_video_peaks(stats, plot=False, ax=None, ax2=None):
         watched_total = np.array(ast.literal_eval(row['watched_total']))
         play = np.array(ast.literal_eval(row['play']))
     except ValueError:
+        print('ValueError')
         return pd.DataFrame(columns=header)
 
     # use only shortest data for analyses

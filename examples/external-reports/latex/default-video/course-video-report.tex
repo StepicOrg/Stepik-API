@@ -1,0 +1,23 @@
+\documentclass[12pt]{report} 
+\usepackage{stepik} 
+\usepackage{ifsym}
+
+\input{generated/info}
+
+\title{Анализ видео на~курсе}
+\subtitle{<<\coursetitle>>}
+\cover{cover.eps}
+\addcoursetexttointro{в курсе \textbf{<<\coursetitle>>} (\url{\courseurl})}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\input{common/introduction}
+
+\chapter{Анализ видео}
+\input{generated/total}
+\input{generated/map}
+
+\end{document}
