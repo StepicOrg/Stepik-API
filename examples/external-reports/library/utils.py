@@ -276,7 +276,6 @@ def get_video_peaks(stats, plot=False, ax=None, ax2=None):
         watched_total = np.array(ast.literal_eval(row['watched_total']))
         play = np.array(ast.literal_eval(row['play']))
     except ValueError:
-        print('ValueError')
         return pd.DataFrame(columns=header)
 
     # use only shortest data for analyses
