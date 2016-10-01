@@ -42,7 +42,7 @@ For example: for registered user, response from `https://stepik.org/api/courses`
 
 ## OAuth 2
 
-In order to call Stepik.org API as a registered uses, you can use this user's OAuth2 keys.
+In order to call Stepik.org API as a registered user, you can use this user's OAuth2 keys.
 You can get your keys by creating an application on https://stepik.org/oauth2/applications/ (while being logged in), and you can also set `redirect_uri`, `Client type` and `Authorization grant type` there.
 
 Authorization endpoint (Authorization code, Implicit grant; redirect_uri needed): `https://stepik.org/oauth2/authorize/.`
