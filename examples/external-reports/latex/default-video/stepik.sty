@@ -1,0 +1,197 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{stepik}[2016/08/17 Stepik.org style file]
+
+\RequirePackage{cmap}
+
+\RequirePackage[T2A]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[russian]{babel}
+\RequirePackage[default]{opensans}
+
+\RequirePackage[pdftex]{graphicx}
+\RequirePackage[pdftex]{color}
+\RequirePackage{colortbl}
+
+\RequirePackage[paper=a4paper, margin=2.5cm, bottom=3cm]{geometry}
+\RequirePackage[absolute]{textpos}
+\RequirePackage{wallpaper}
+\RequirePackage{fancyhdr}
+
+\RequirePackage{tabularx}
+\RequirePackage{titlesec}
+\RequirePackage{titletoc}
+\RequirePackage{hyperref}
+\RequirePackage{verbatim}
+
+
+\textblockorigin{2.5cm}{2.5cm}
+
+
+% Define Stepic pallette
+\definecolor{Black}{rgb}{0, 0, 0}
+\definecolor{White}{rgb}{1, 1, 1}
+\definecolor{PastelGreen}{rgb}{0.4, 0.8, 0.4}
+\definecolor{BlueRibbon}{rgb}{0, 0.4, 1}
+\definecolor{NeonCarrot}{rgb}{1, 0.6, 0.2}
+\definecolor{Silver}{rgb}{0.8, 0.8, 0.8}
+\definecolor{GrannySmithApple}{rgb}{0.6471, 0.8981, 0.6471}
+% Additional text color
+\definecolor{GreyTextColor}{rgb}{0.367,0.367,0.367}
+
+
+% Change section header style
+\titleformat{\chapter}
+{\normalfont\LARGE\color{black}}{\thechapter.}{1em}{}
+\titleformat{\section}
+{\normalfont\Large\color{black}}{\thesection.}{1em}{}
+\renewcommand{\thesection}{\arabic{section}}
+\titleformat{\subsection}
+{\normalfont\large\color{black}}{\thesubsection.}{1em}{}
+
+\titlecontents{chapter}
+[2em]
+{}
+{\contentslabel{2em}}
+{\hspace*{-2em}}
+{\titlerule*[1pc]{}\contentspage}
+[\vspace*{0.7em}]
+
+% Indent first
+\let\@afterindentfalse\@afterindenttrue
+\@afterindenttrue
+
+
+% Make titlepage
+\def\cover#1{
+\def\cover@background{#1}}
+
+\def\subtitle#1{
+\def\@subtitle{#1}}
+
+\def\maketitle{
+\linespread{1}
+\begin{titlepage}
+\ifdefined\cover@background{\ThisLRCornerWallPaper{1}{\cover@background}}
+\begin{flushleft}
+\vspace*{0.5em}
+\fontsize{40px}{48px}\selectfont\@title
+\end{flushleft}
+\begin{flushleft}
+\color[rgb]{0.5,0.5,0.5}\fontsize{20px}{24px}\selectfont\@subtitle
+\end{flushleft}
+\end{titlepage}
+\setcounter{page}{2}
+}
+
+% Footer
+% Redefine 'plain' page style to be used for chapter pages
+\fancypagestyle{plain}{
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhf{}
+\fancyfoot[L]{
+\includegraphics[scale=0.2]{logo.eps}
+}
+\fancyfoot[R]{\raisebox{0.35em}{\thepage}}%
+}
+\pagestyle{plain}
+
+
+
+
+% Hyperref options
+\hypersetup{
+  colorlinks   = true, %Colours links instead of ugly boxes
+  urlcolor     = PastelGreen, %Colour for external hyperlinks
+  linkcolor    = GreyTextColor, %Colour of internal links
+  citecolor    = GreyTextColor %Colour of citations
+}
+
+% Change TOC title with babel
+\addto\captionsrussian{% 
+  \renewcommand{\contentsname}{Содержание}%
+}
+
+
+% Item description
+\newcommand{\stepurl}[1]{
+\begin{textblock*}{\textwidth}(0pt,-12pt)
+\begin{flushright}
+\small\url{#1}
+\end{flushright}
+\end{textblock*}
+}
+
+
+\newcommand{\stepstatistics}[5]{
+\section*{Задание~#1}
+\begin{flushright}
+\begin{tabular}{p{0.2\textwidth}rr}
+&\textcolor{black}{Число ответивших}: & #5\\
+&\textcolor{black}{Сложность}: & #2\\
+&\textcolor{black}{Дискриминативность}: & #3\\
+&\textcolor{black}{Корреляция с общим баллом}: & #4\\
+\end{tabular}
+\end{flushright}
+}
+
+\def\multiplecorrect{\raisebox{-2px}{\includegraphics[scale=0.5]{common/multiplecorrect.png}}}
+\def\multiplewrong{\raisebox{-2px}{\includegraphics[scale=0.5]{common/multiplewrong.png}}}
+\def\singlecorrect{\raisebox{-2px}{\includegraphics[scale=0.5]{common/singlecorrect.png}}}
+\def\singlewrong{\raisebox{-2px}{\includegraphics[scale=0.5]{common/singlewrong.png}}}
+
+
+\newenvironment{question}{%\subsection*{Текст задания}
+}{}
+\newenvironment{code}{\endgraf\verbatim}{\endverbatim}
+
+
+\newenvironment{options}{%\subsection*{Варианты опций}
+\begin{flushright}\begin{tabular}{lp{0.8\textwidth}r}
+&\multicolumn{2}{r}{\parbox{0.3\textwidth}
+{\raggedleft
+\scriptsize \textcolor{black}{Сложность опции}
+}}\\
+}
+{\end{tabular}\end{flushright}}
+\newcommand{\option}[3]{
+
+#1 
+& 
+\ifnum\pdfstrcmp{#3}{0.05}=1 \relax\else\cellcolor[rgb]{1, 0.95, 0.9}\fi
+#2 
+& 
+\ifnum\pdfstrcmp{#3}{0.05}=1 \relax\else\cellcolor[rgb]{1, 0.95, 0.9}\fi
+%\ifnum\pdfstrcmp{#3}{0.05}=1 #3 \else\textcolor{NeonCarrot}{#3}\fi 
+#3
+\\
+}
+
+
+\newenvironment{recommendations}{\subsection*{Рекомендации}}{}
+
+% Peaks
+\newenvironment{peaks}{\subsection*{Пики}\begin{tabular}{ccccc}
+Начало пика&Конец пика&Ширина&Высота&Площадь\\}
+{\end{tabular}}
+\newcommand{\peak}[5]{
+#1 & #2 & #3 & #4 & #5 \\
+}
+
+\newenvironment{totalpeaks}{\par\begin{tabular}{cccc}
+Номер видео&Начало пика&Конец пика&Площадь\\}
+{\end{tabular}}
+\newcommand{\totalpeak}[5]{
+\href{#2}{#1} & #3 & #4 & #5 \\
+}
+
+
+% Course text to intro
+\let\@addcoursetexttointro\relax
+\def\addcoursetexttointro#1{\def\@addcoursetexttointro{#1}}
+\def\coursetexttointro{\@addcoursetexttointro\ }
+
+
+% Commands for whole report
+\linespread{1.5}
+\color{GreyTextColor}

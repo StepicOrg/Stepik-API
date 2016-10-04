@@ -9,3 +9,13 @@ ITEM_FORMAT = '''
 '''
 
 OPTION_FORMAT = '\\option{{{label}}}{{{name}}}{{{difficulty}}} \n'
+
+
+STEP_FORMAT = '''
+\\newpage
+\\stepurl{{{step_url}}}
+\\section*{{Видео~{step_id:.0f}}}
+
+\\includegraphics[scale=0.8]{{generated/step_{step_id:.0f}.png}}
+'''
+MIN_VIDEO_LENGTH = 5

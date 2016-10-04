@@ -1,13 +1,16 @@
 import argparse
 import shutil
 import os
+
+import matplotlib.pyplot as plt
 import pandas as pd
 
-from library.api import API_HOST, fetch_objects
-from library.settings import ITEM_FORMAT, OPTION_FORMAT
+from library.api import API_HOST, get_token, fetch_objects
+from library.settings import ITEM_FORMAT, OPTION_FORMAT, STEP_FORMAT
 from library.utils import (html2latex, create_answer_matrix, get_course_structure,
                            get_course_submissions, get_step_options,
-                           get_item_statistics, get_question, process_step_url, process_options_with_name)
+                           get_item_statistics, get_question, process_step_url, process_options_with_name,
+                           get_video_peaks, get_video_stats)
 
 
 class ExternalCourseReport:
@@ -267,4 +270,103 @@ class ItemReport(ExternalCourseReport):
                     item_file.write('\\end{recommendations}\n')
                 else:
                     item_file.write('%\\begin{recommendations}\n\n%\\end{recommendations}\n')
+
+
+class VideoReport(ExternalCourseReport):
+    default_project_folder = 'default-video'
+    default_report_name = 'course-video-report'
+    course_project_folder = 'course-{}-video'
+    course_report_name = 'course-{}-video-report'
+
+    def generate_latex_report(self, directory, cached=True):
+        course_id = self.course_id
+        token = get_token()
+
+        course_structure = get_course_structure(course_id)
+        course_structure = course_structure.loc[course_structure.step_type == 'video',
+                                                ['step_id', 'step_position', 'lesson_id']]
+
+        course_info = fetch_objects('courses', pk=course_id)
+        course_title = course_info[0]['title']
+        course_url = '{}/course/{}'.format(API_HOST, course_id)
+
+        with open('{}info.tex'.format(directory), 'w') as info_file:
+            info_file.write('\\def\\coursetitle{{{}}}\n\\def\\courseurl{{{}}}\n'.format(course_title, course_url))
+
+        with open('{}map.tex'.format(directory), 'w') as map_file:
+            map_file.write('')
+
+        total_peaks = pd.DataFrame()
+        for ind, row in course_structure.iterrows():
+            step_id = row.step_id
+            step_url = 'https://stepik.org/lesson/{}/step/{}'.format(row.lesson_id, row.step_position)
+
+            stats = get_video_stats(step_id, cached, token)
+
+            fig = plt.figure()
+            ax1 = fig.add_subplot(211)
+            ax2 = fig.add_subplot(212)
+            windows = get_video_peaks(stats, plot=True, ax=ax1, ax2=ax2)
+
+            windows['step_id'] = step_id
+            windows['course_id'] = course_id
+            windows['step_url'] = step_url
+
+            windows['start_sec'] = windows['start'].apply(lambda x: '{:02d}:{:02d}'.format(x//60, x%60))
+            windows['end_sec'] = windows['end'].apply(lambda x: '{:02d}:{:02d}'.format(x//60, x%60))
+
+            self.generate_latex_files(course_id, step_id, step_url, windows, directory)
+            fig.savefig('{}step_{}.png'.format(directory, step_id))
+            plt.close()
+
+            if total_peaks.empty:
+                total_peaks = windows
+            else:
+                total_peaks = total_peaks.append(windows)
+
+        total_peaks.to_csv('cache/course-{}-totalpeaks.csv'.format(course_id), index=False)
+
+        # total_peaks = pd.read_csv('cache/course-{}-totalpeaks.csv'.format(course_id))
+        total_peaks = total_peaks.sort_values('area',  ascending=False)
+        if total_peaks.shape[0] <= 5:
+            top_peaks = total_peaks
+        else:
+            top_peaks = total_peaks[0:5]
+
+        with open('{}total.tex'.format(directory), 'w') as total_file:
+            if not total_peaks.empty:
+                total_file.write('В курсе выделены следующие пики, имеющие максимальную относительную площадь.\n')
+                total_file.write('Проверьте, нет ли в данных местах у учащихся ' +
+                                 'трудностей с пониманием учебного материала.\n')
+
+                total_file.write('\\begin{totalpeaks}\n')
+                for ind, row in top_peaks.iterrows():
+                    total_file.write('\\totalpeak{{{}}}{{{}}}{{{}}}{{{}}}{{{:.2f}}}\n'.format(row.step_id,
+                                                                                        row.step_url,
+                                                                                        row.start_sec,
+                                                                                        row.end_sec,
+                                                                                        row.area))
+                total_file.write('\\end{totalpeaks}\n')
+            else:
+                total_file.write('\n')
+
+    def generate_latex_files(self, course_id, step_id, step_url, windows, directory):
+
+        with open('{}map.tex'.format(directory), 'a') as map_file:
+            map_file.write('\\input{{generated/step_{}.tex}}\n'.format(step_id))
+
+        with open('{}step_{}.tex'.format(directory, step_id), 'w') as step_file:
+            step_file.write(STEP_FORMAT.format(step_id=step_id, step_url=step_url))
+
+            if windows.empty:
+                step_file.write('\n\nПики не обнаружены.\n')
+            else:
+                step_file.write('\n\n\\begin{peaks}\n')
+                for ind, row in windows.iterrows():
+                    step_file.write('\peak{{{}}}{{{}}}{{{:.2f}}}{{{:.2f}}}{{{:.2f}}}\n'.format(row.start_sec,
+                                                                                               row.end_sec,
+                                                                                               row.width,
+                                                                                               row.height,
+                                                                                               row.area))
+                step_file.write('\\end{peaks}\n\n')
 
