@@ -43,30 +43,29 @@ class ExternalCourseReport:
             directory_name = self.course_project_folder.format(self.course_id)
             full_directory = base + directory_name
 
+            if update:
+                shutil.rmtree(full_directory)
             if not os.path.exists(full_directory):
                 shutil.copytree(base + self.default_project_folder, full_directory)
 
             self.generate_latex_report(full_directory + '/generated/', cached=cached)
-            self.compile_latex_report(full_directory, update=update)
+            self.compile_latex_report(full_directory)
 
     def generate_latex_report(self, directory, cached=True):
         pass
 
-    def compile_latex_report(self, directory, update=True):
+    def compile_latex_report(self, directory):
         latex_command = 'pdflatex -synctex=1 -interaction=nonstopmode {}.tex'.format(self.default_report_name)
 
-        os.chdir(directory)
-
-        if update:
-            os.system('cp -rf ../{}/* .'.format(self.default_project_folder))
-
         # Launch LaTeX three times
+        os.chdir(directory)
         os.system(latex_command)
         os.system(latex_command)
         os.system(latex_command)
 
         report_name = self.course_report_name.format(self.course_id)
-        os.system('cp {}.pdf ../../pdf/{}.pdf'.format(self.default_report_name, report_name))
+        shutil.copy('{}.pdf'.format(self.default_report_name),
+                    '../../pdf/{}.pdf'.format(report_name))
 
 
 class ItemReport(ExternalCourseReport):
