@@ -3,11 +3,13 @@
 * Python 3: pypandoc, shutil, argparse
 * PdfLaTeX
 
-It is recommended to install TeX Live for compilation latex project to pdf.
+We recommend to install TeX Live for compilation latex project to pdf if you use Linux.
 
       sudo apt-get install texlive-full
 
 If you need to edit latex projects, you can install [TeXmaker](http://www.xm1math.net/texmaker/download.html).
+
+If you use Windows, you can install [MikTeX](https://miktex.org/).
 
 # API keys
 Get your keys at https://stepik.org/oauth2/applications/

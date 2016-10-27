@@ -43,30 +43,29 @@ class ExternalCourseReport:
             directory_name = self.course_project_folder.format(self.course_id)
             full_directory = base + directory_name
 
+            if update:
+                shutil.rmtree(full_directory)
             if not os.path.exists(full_directory):
                 shutil.copytree(base + self.default_project_folder, full_directory)
 
             self.generate_latex_report(full_directory + '/generated/', cached=cached)
-            self.compile_latex_report(full_directory, update=update)
+            self.compile_latex_report(full_directory)
 
     def generate_latex_report(self, directory, cached=True):
         pass
 
-    def compile_latex_report(self, directory, update=True):
+    def compile_latex_report(self, directory):
         latex_command = 'pdflatex -synctex=1 -interaction=nonstopmode {}.tex'.format(self.default_report_name)
 
-        os.chdir(directory)
-
-        if update:
-            os.system('cp -rf ../{}/* .'.format(self.default_project_folder))
-
         # Launch LaTeX three times
+        os.chdir(directory)
         os.system(latex_command)
         os.system(latex_command)
         os.system(latex_command)
 
         report_name = self.course_report_name.format(self.course_id)
-        os.system('cp {}.pdf ../../pdf/{}.pdf'.format(self.default_report_name, report_name))
+        shutil.copy('{}.pdf'.format(self.default_report_name),
+                    '../../pdf/{}.pdf'.format(report_name))
 
 
 class ItemReport(ExternalCourseReport):
@@ -80,7 +79,7 @@ class ItemReport(ExternalCourseReport):
         course_info = fetch_objects('courses', pk=course_id)
         course_title = course_info[0]['title']
         course_url = '{}/course/{}'.format(API_HOST, course_id)
-        with open('{}info.tex'.format(directory), 'w') as info_file:
+        with open('{}info.tex'.format(directory), 'w', encoding='utf-8') as info_file:
             info_file.write('\\def\\coursetitle{{{}}}\n\\def\\courseurl{{{}}}\n'.format(course_title, course_url))
 
         course_structure_filename = 'cache/course-{}-structure.csv'.format(course_id)
@@ -222,13 +221,13 @@ class ItemReport(ExternalCourseReport):
                 recommendation += 'Данное задание содержит нефункциональные опции: их нужно заменить или удалить.\n\n'
             return recommendation
 
-        with open('{}map.tex'.format(directory), 'w') as map_file:
+        with open('{}map.tex'.format(directory), 'w', encoding='utf-8') as map_file:
             map_file.write('')
 
         for ind, item in item_statistics.iterrows():
-            with open('{}map.tex'.format(directory), 'a') as map_file:
+            with open('{}map.tex'.format(directory), 'a', encoding='utf-8') as map_file:
                 map_file.write('\\input{{generated/step-{}.tex}}\n'.format(item.step_id))
-            with open('{}step-{}.tex'.format(directory, item.step_id), 'w') as item_file:
+            with open('{}step-{}.tex'.format(directory, item.step_id), 'w', encoding='utf-8') as item_file:
                 item_file.write(ITEM_FORMAT.format(item=item))
 
                 if item.step_type != 'choice':
@@ -290,10 +289,10 @@ class VideoReport(ExternalCourseReport):
         course_title = course_info[0]['title']
         course_url = '{}/course/{}'.format(API_HOST, course_id)
 
-        with open('{}info.tex'.format(directory), 'w') as info_file:
+        with open('{}info.tex'.format(directory), 'w', encoding='utf-8') as info_file:
             info_file.write('\\def\\coursetitle{{{}}}\n\\def\\courseurl{{{}}}\n'.format(course_title, course_url))
 
-        with open('{}map.tex'.format(directory), 'w') as map_file:
+        with open('{}map.tex'.format(directory), 'w', encoding='utf-8') as map_file:
             map_file.write('')
 
         total_peaks = pd.DataFrame()
@@ -333,7 +332,7 @@ class VideoReport(ExternalCourseReport):
         else:
             top_peaks = total_peaks[0:5]
 
-        with open('{}total.tex'.format(directory), 'w') as total_file:
+        with open('{}total.tex'.format(directory), 'w', encoding='utf-8') as total_file:
             if not total_peaks.empty:
                 total_file.write('В курсе выделены следующие пики, имеющие максимальную относительную площадь.\n')
                 total_file.write('Проверьте, нет ли в данных местах у учащихся ' +
@@ -352,10 +351,10 @@ class VideoReport(ExternalCourseReport):
 
     def generate_latex_files(self, course_id, step_id, step_url, windows, directory):
 
-        with open('{}map.tex'.format(directory), 'a') as map_file:
+        with open('{}map.tex'.format(directory), 'a', encoding='utf-8') as map_file:
             map_file.write('\\input{{generated/step_{}.tex}}\n'.format(step_id))
 
-        with open('{}step_{}.tex'.format(directory, step_id), 'w') as step_file:
+        with open('{}step_{}.tex'.format(directory, step_id), 'w', encoding='utf-8') as step_file:
             step_file.write(STEP_FORMAT.format(step_id=step_id, step_url=step_url))
 
             if windows.empty:
