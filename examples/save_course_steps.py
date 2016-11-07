@@ -29,7 +29,7 @@ def fetch_object(obj_class, obj_id):
     return response['{}s'.format(obj_class)][0]
 
 
-def fetch_objects(obj_class, obj_ids):
+def fetch_objects(obj_class, obj_ids, keep_order=True):
     objs = []
     # Fetch objects by 30 items,
     # so we won't bump into HTTP request length limits
@@ -42,7 +42,10 @@ def fetch_objects(obj_class, obj_ids):
         response = requests.get(api_url,
                                 headers={'Authorization': 'Bearer ' + token}
                                 ).json()
+
         objs += response['{}s'.format(obj_class)]
+    if (keep_order):
+        return sorted(objs, key=lambda x: obj_ids.index(x['id']))
     return objs
 
 
