@@ -3,7 +3,7 @@ Niema Moshiri 2016
 Download a Stepik course
 Run with Python 3
 '''
-USAGE = "USAGE: python DownloadStepikCourse.py <course_ID>"
+USAGE = "USAGE: python download_stepik_course.py <course_ID>"
 # imports
 import sys
 import requests
