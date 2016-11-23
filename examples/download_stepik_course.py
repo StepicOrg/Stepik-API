@@ -14,8 +14,8 @@ import datetime
 # Enter parameters below:
 # Get your keys at https://stepik.org/oauth2/applications/
 # (client type = confidential, authorization grant type = client credentials)
-client_id = ...
-client_secret = ...
+client_id = 'FIXME'
+client_secret = 'FIXME'
 api_host = 'https://stepik.org'
 
 # parse args (to get course ID)
@@ -121,7 +121,7 @@ for secIndex, section in enumerate(sections):
                 'id': str(step['id']),
                 'time': datetime.datetime.now().isoformat()
             }
-            f.write(json.dumps(data))
+            f.write(json.dumps(data, indent=4, ensure_ascii=False))
             f.close()
             print(filename)
     print("===== END SECTION " + str(secIndex+1) + " OF " + str(len(sections)) + " =====\n\n")
