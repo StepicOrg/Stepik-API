@@ -369,3 +369,30 @@ class VideoReport(ExternalCourseReport):
                                                                                                row.area))
                 step_file.write('\\end{peaks}\n\n')
 
+
+class DropoutReport(ExternalCourseReport):
+    default_project_folder = 'default-dropout'
+    default_report_name = 'course-dropout-report'
+    course_project_folder = 'course-{}-dropout'
+    course_report_name = 'course-{}-dropout-report'
+
+    def generate_latex_report(self, directory, cached=True):
+        course_id = self.course_id
+        token = get_token()
+
+        course_structure = get_course_structure(course_id, token=token)
+
+        course_info = fetch_objects('courses', pk=course_id)
+        course_title = course_info[0]['title']
+        course_url = '{}/course/{}'.format(API_HOST, course_id)
+
+        with open('{}info.tex'.format(directory), 'w', encoding='utf-8') as info_file:
+            info_file.write('\\def\\coursetitle{{{}}}\n\\def\\courseurl{{{}}}\n'.format(course_title, course_url))
+
+        with open('{}map.tex'.format(directory), 'w', encoding='utf-8') as map_file:
+            map_file.write('')
+
+
+
+
+
