@@ -35,7 +35,13 @@ def process_step_url(row):
 
 # API functions
 
-def get_course_structure(course_id, token=None):
+def get_course_structure(course_id, cached=True, token=None):
+    # use cache
+    course_structure_filename = 'cache/course-{}-structure.csv'.format(course_id)
+    if os.path.isfile(course_structure_filename) and cached:
+        course_structure = pd.read_csv(course_structure_filename)
+        return course_structure
+
     if not token:
         token = get_token()
     course = fetch_objects_by_id('courses', course_id, token=token)[0]
@@ -85,11 +91,20 @@ def get_course_structure(course_id, token=None):
 
     course_structure = course_structure.merge(module_structure)
     course_structure = course_structure.sort_values(['module_position', 'lesson_position', 'step_position'])
+    course_structure.to_csv(course_structure_filename, index=False)
     return course_structure
 
 
-def get_course_submissions(course_id, course_structure=pd.DataFrame(), token=None):
+def get_course_submissions(course_id, course_structure=pd.DataFrame(), cached=True, token=None):
     header = ['submission_id', 'user_id', 'step_id', 'attempt_id', 'status', 'submission_time', 'reply', 'hint']
+
+    # use cache
+    course_submissions_filename = 'cache/course-{}-submissions.csv'.format(course_id)
+    if os.path.isfile(course_submissions_filename) and cached:
+        course_submissions = pd.read_csv(course_submissions_filename)
+        course_submissions = course_submissions[header]
+        return course_submissions
+
     if not token:
         token=get_token()
 
