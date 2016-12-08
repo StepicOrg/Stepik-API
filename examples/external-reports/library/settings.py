@@ -19,3 +19,7 @@ STEP_FORMAT = '''
 \\includegraphics[scale=0.8]{{generated/step_{step_id:.0f}.png}}
 '''
 MIN_VIDEO_LENGTH = 5
+
+STEP_STAT_FORMAT = """
+\\lessonstepstatistics{{{stat[step_id]:.0f}}}{{{stat[step_url]}}}{{{stat[step_type]}}}{{{stat[viewed_by]}}}{{{stat[completion_rate]}}}{{{stat[dropout_rate]}}}
+"""

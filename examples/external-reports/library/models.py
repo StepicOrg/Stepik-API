@@ -1,16 +1,17 @@
 import argparse
 import shutil
 import os
+import time
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from library.api import API_HOST, get_token, fetch_objects
-from library.settings import ITEM_FORMAT, OPTION_FORMAT, STEP_FORMAT
+from library.api import API_HOST, get_token, fetch_objects, fetch_objects_by_pk
+from library.settings import ITEM_FORMAT, OPTION_FORMAT, STEP_FORMAT, STEP_STAT_FORMAT
 from library.utils import (html2latex, create_answer_matrix, get_course_structure,
-                           get_course_submissions, get_step_options,
+                           get_course_submissions, get_step_options, get_step_info,
                            get_item_statistics, get_question, process_step_url, process_options_with_name,
-                           get_video_peaks, get_video_stats)
+                           get_video_peaks, get_video_stats, get_unix_date, get_course_grades)
 
 
 class ExternalCourseReport:
@@ -380,10 +381,8 @@ class DropoutReport(ExternalCourseReport):
         course_id = self.course_id
         token = get_token()
 
-        course_structure = get_course_structure(course_id, token=token)
-
-        course_info = fetch_objects('courses', pk=course_id)
-        course_title = course_info[0]['title']
+        course_info = fetch_objects('courses', pk=course_id)[0]
+        course_title = course_info['title']
         course_url = '{}/course/{}'.format(API_HOST, course_id)
 
         with open('{}info.tex'.format(directory), 'w', encoding='utf-8') as info_file:
@@ -392,7 +391,68 @@ class DropoutReport(ExternalCourseReport):
         with open('{}map.tex'.format(directory), 'w', encoding='utf-8') as map_file:
             map_file.write('')
 
+        time_now = time.time()
+        certificate_threshold = course_info['certificate_regular_threshold']
+        begin_date = get_unix_date(course_info['begin_date']) if course_info['begin_date'] else 0
+        last_deadline = get_unix_date(course_info['last_deadline']) if  course_info['begin_date'] else time_now
 
+        course_teachers = course_info['instructors']
+        course_testers = fetch_objects_by_pk('groups', course_info["testers_group"], token=token)[0]['users']
+        users_to_delete = course_teachers + course_testers
 
+        # collect course grades
+        grades = get_course_grades(course_id, token=token)
+        learners = grades[['user_id', 'total_score', 'date_joined', 'last_viewed']].drop_duplicates()
+        learners = learners[~learners.user_id.isin(users_to_delete)]
+        learners = learners[(0 < learners.total_score) & (learners.total_score < certificate_threshold)]
 
+        # collect submissions
+        course_structure = get_course_structure(course_id, token=token)
+        course_submissions = get_course_submissions(course_id, course_structure, token)
+        course_submissions = course_submissions[course_submissions.user_id.isin(learners.user_id)]
 
+        # find last submissions
+        course_submissions = course_submissions[(begin_date < course_submissions.submission_time) &
+                                                (course_submissions.submission_time < last_deadline)]
+        idx_grouped = course_submissions.groupby('user_id')['submission_time']
+        idx = idx_grouped.transform(max) == course_submissions['submission_time']
+        last_submissions = course_submissions[idx].groupby('step_id', as_index=False)['submission_id'].count()
+        last_submissions = last_submissions.rename(columns={'submission_id': 'last_submissions'})
+
+        unique_submissions = course_submissions.groupby('step_id', as_index=False)['user_id'].agg(pd.Series.nunique)
+        unique_submissions = unique_submissions.rename(columns={'user_id': 'unique_submissions'})
+        step_stats = unique_submissions.merge(last_submissions)
+        step_stats['dropout_rate'] = step_stats.apply(lambda row: (row.last_submissions / row.unique_submissions
+                                                                   if row.unique_submissions else 0), axis=1)
+
+        step_stats = pd.merge(course_structure, step_stats, how='left')
+        additional_columns = ['viewed_by', 'passed_by', 'correct_ratio']
+        step_stats[additional_columns] = step_stats.step_id.apply(lambda id:
+                                                                  get_step_info(id)[additional_columns])
+        step_stats['difficulty'] = 1 - step_stats['correct_ratio']
+        step_stats['completion_rate'] = step_stats.apply((lambda row: row.passed_by / row.viewed_by
+                                                          if row.viewed_by else 0), axis=1)
+
+        step_stats.to_csv('cache/course-{}-stepstats.csv'.format(course_id), index=False)
+
+        step_stats['step_url'] = step_stats.apply(process_step_url, axis=1)
+        step_stats['completion_rate'] *= 100
+        step_stats['dropout_rate'] *= 100
+        step_stats['completion_rate'] = step_stats['completion_rate'].round(1)
+        step_stats['dropout_rate'] = step_stats['dropout_rate'].round(1)
+
+        for lesson_id in step_stats.lesson_id.unique():
+            step_lesson_stats = step_stats[step_stats.lesson_id == lesson_id]
+            step_lesson_stats = step_lesson_stats.fillna('')
+            lesson_url = '{}/lesson/{}'.format(API_HOST, lesson_id)
+            lesson_name = '{}'.format(lesson_id)  # TODO: use module and lesson position
+
+            with open('{}map.tex'.format(directory), 'a', encoding='utf-8') as map_file:
+                map_file.write('\\input{{generated/lesson-{}.tex}}\n'.format(lesson_id))
+
+            with open('{}lesson-{}.tex'.format(directory, lesson_id), 'w', encoding='utf-8') as lesson_file:
+                lesson_file.write('\\newpage\n\\lessoninfo{{{}}}{{{}}}\n'.format(lesson_name, lesson_url))
+                lesson_file.write('\\begin{lessonstatistics}')
+                for _, step_stat in step_lesson_stats.iterrows():
+                    lesson_file.write(STEP_STAT_FORMAT.format(stat=step_stat))
+                lesson_file.write('\\end{lessonstatistics}')
