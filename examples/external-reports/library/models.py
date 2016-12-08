@@ -170,7 +170,7 @@ class ItemReport(ExternalCourseReport):
                         step_options = step_options.append(options)
 
                     step_answers = create_answer_matrix(step_options, 'user_id', 'option_id', 'answer',
-                                                    lambda x: int(False not in x.tolist()))
+                                                        lambda x: int(False not in x.tolist()))
 
                     step_statistics = get_item_statistics(step_answers)
                     step_statistics = step_statistics.rename(columns={'item': 'option_id',
@@ -189,16 +189,16 @@ class ItemReport(ExternalCourseReport):
 
     def generate_latex_files(self, item_statistics, option_statistics, directory):
         # TODO: Improve recommendations based on item and option statistics
-        def get_recommendation(item, options):
+        def get_recommendation(question, options):
             recommendation = ''
-            difficulty = item.difficulty
-            discrimination = item.discrimination
-            item_total_corr = item.item_total_corr
+            difficulty = question.difficulty
+            discrimination = question.discrimination
+            item_total_corr = question.item_total_corr
 
             if options.empty or ('difficulty' not in options.columns.values):
                 n_nonfunct_options = 0
             else:
-                nonfunct_options = options[(options.difficulty < 0.05) & ~(options.is_correct)]
+                nonfunct_options = options[(options.difficulty < 0.05) & ~options.is_correct]
                 n_nonfunct_options = nonfunct_options.shape[0]
 
             if difficulty < 0.05:
@@ -211,7 +211,8 @@ class ItemReport(ExternalCourseReport):
                                   'если оно корректно составлено, то его лучше исключить.\n\n'
 
             if (0 < discrimination) and (discrimination < 0.3):
-                recommendation += 'У задания низкая дискриминативность: его можно оставить в качесте тренировочного задания, ' + \
+                recommendation += 'У задания низкая дискриминативность: ' + \
+                                  'его можно оставить в качесте тренировочного задания, ' + \
                                   'но для проверки знаний его лучше не использовать.\n\n'
 
             if (0 < item_total_corr) and (item_total_corr < 0.2):
@@ -312,8 +313,8 @@ class VideoReport(ExternalCourseReport):
             windows['course_id'] = course_id
             windows['step_url'] = step_url
 
-            windows['start_sec'] = windows['start'].apply(lambda x: '{:02d}:{:02d}'.format(x//60, x%60))
-            windows['end_sec'] = windows['end'].apply(lambda x: '{:02d}:{:02d}'.format(x//60, x%60))
+            windows['start_sec'] = windows['start'].apply(lambda x: '{:02d}:{:02d}'.format(x // 60, x % 60))
+            windows['end_sec'] = windows['end'].apply(lambda x: '{:02d}:{:02d}'.format(x // 60, x % 60))
 
             self.generate_latex_files(course_id, step_id, step_url, windows, directory)
             fig.savefig('{}step_{}.png'.format(directory, step_id))
@@ -342,10 +343,10 @@ class VideoReport(ExternalCourseReport):
                 total_file.write('\\begin{totalpeaks}\n')
                 for ind, row in top_peaks.iterrows():
                     total_file.write('\\totalpeak{{{}}}{{{}}}{{{}}}{{{}}}{{{:.2f}}}\n'.format(row.step_id,
-                                                                                        row.step_url,
-                                                                                        row.start_sec,
-                                                                                        row.end_sec,
-                                                                                        row.area))
+                                                                                              row.step_url,
+                                                                                              row.start_sec,
+                                                                                              row.end_sec,
+                                                                                              row.area))
                 total_file.write('\\end{totalpeaks}\n')
             else:
                 total_file.write('\n')
@@ -394,7 +395,7 @@ class DropoutReport(ExternalCourseReport):
         time_now = time.time()
         certificate_threshold = course_info['certificate_regular_threshold']
         begin_date = get_unix_date(course_info['begin_date']) if course_info['begin_date'] else 0
-        last_deadline = get_unix_date(course_info['last_deadline']) if  course_info['begin_date'] else time_now
+        last_deadline = get_unix_date(course_info['last_deadline']) if course_info['begin_date'] else time_now
 
         course_teachers = course_info['instructors']
         course_testers = fetch_objects_by_pk('groups', course_info["testers_group"], token=token)[0]['users']
@@ -427,8 +428,8 @@ class DropoutReport(ExternalCourseReport):
 
         step_stats = pd.merge(course_structure, step_stats, how='left')
         additional_columns = ['viewed_by', 'passed_by', 'correct_ratio']
-        step_stats[additional_columns] = step_stats.step_id.apply(lambda id:
-                                                                  get_step_info(id)[additional_columns])
+        step_stats[additional_columns] = step_stats.step_id.apply(lambda step:
+                                                                  get_step_info(step)[additional_columns])
         step_stats['difficulty'] = 1 - step_stats['correct_ratio']
         step_stats['completion_rate'] = step_stats.apply((lambda row: row.passed_by / row.viewed_by
                                                           if row.viewed_by else 0), axis=1)

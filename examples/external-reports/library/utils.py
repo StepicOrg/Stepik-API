@@ -108,7 +108,7 @@ def get_course_submissions(course_id, course_structure=pd.DataFrame(), cached=Tr
         return course_submissions
 
     if not token:
-        token=get_token()
+        token = get_token()
 
     if course_structure.empty:
         course_structure = get_course_structure(course_id, token)
@@ -154,7 +154,7 @@ def get_course_grades(course_id, cached=True, token=None):
         return course_grades
 
     if not token:
-        token=get_token()
+        token = get_token()
 
     course_grades = pd.DataFrame()
     grades = fetch_objects('course-grades', course=course_id, token=token)
@@ -181,7 +181,6 @@ def get_enrolled_users(course_id, token=None):
 
     learner_group = fetch_objects('courses', token=token, pk=course_id)[0]['learners_group']
     users = fetch_objects('groups', token=token, pk=learner_group)[0]['users']
-
     return users
 
 
@@ -211,7 +210,6 @@ def process_options_with_name(data, reply, option_names):
                             'answer': answer,
                             'clue': clue})
     options = options[['is_multiple', 'option_id', 'answer', 'clue']]
-
     return options
 
 
@@ -268,7 +266,6 @@ def create_answer_matrix(data, user_column, item_column, value_column, aggfunc=n
 
     if not answers.empty:
         answers = answers[value_column]
-
     return answers
 
 
@@ -387,7 +384,6 @@ def get_video_peaks(stats, plot=False, ax=None, ax2=None):
             lambda x: rewatching[x['start']:x['end']].sum()/total_area, axis=1)
     else:
         common_windows = pd.DataFrame(columns=header)
-
     return common_windows
 
 
@@ -470,16 +466,14 @@ def detect_peaks(data, tau=1.5):
                 end = i
 
             windows = windows.append({'start': start,
-                            'peak': peak,
-                            'end': end,
-                            'rise_rate': rise_rate}, ignore_index=True)
+                                      'peak': peak,
+                                      'end': end,
+                                      'rise_rate': rise_rate}, ignore_index=True)
         else:
             [mean, meandev] = detect_peaks_update(mean, meandev, bins[i])
         i += 1
 
     windows[['start', 'peak', 'end']] = windows[['start', 'peak', 'end']].astype(int)
-    #print(windows)
-
     return windows
 
 
