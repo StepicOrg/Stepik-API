@@ -41,3 +41,15 @@ or
     python video_report.py -c course_id
     
 Report will be put in ``./pdf/course-{course_id}-video-report.pdf``
+
+
+## Dropout Report
+To build the dropout report for course with course_id, you should launch in the command line.
+
+    python dropout_report.py --course course_id
+
+or
+
+    python dropout_report.py -c course_id
+
+Report will be put in ``./pdf/course-{course_id}-dropout-report.pdf``
