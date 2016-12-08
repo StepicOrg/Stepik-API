@@ -2,6 +2,7 @@ import argparse
 import shutil
 import os
 import time
+import datetime
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -28,6 +29,8 @@ class ExternalCourseReport:
         parser.add_argument('-c', '--course', type=int, help='course id')
         parser.add_argument('-n', '--nocache', action='store_true', help='no cache when generate latex report')
         parser.add_argument('-u', '--update', action='store_true', help='update project when compile latex report')
+        parser.add_argument('-d', '--date', type=str,
+                            help='date when data collection started, in the format YYYY-MM-DD ')
         return parser
 
     def build(self):
@@ -37,6 +40,13 @@ class ExternalCourseReport:
             self.course_id = args.course
             cached = not bool(args.nocache)
             update = bool(args.update)
+            date = args.date if args.date else '1970-01-01'
+            try:
+                timestamp = time.mktime(datetime.datetime.strptime(date.split('+')[0], '%Y-%m-%d').timetuple())
+                self.from_date = int(timestamp)
+            except ValueError:
+                print('data {} does not match format YYYY-MM-DD, default 1970-01-01'. format(date))
+                self.from_date = 0
 
             print('Course {} processing...'.format(self.course_id))
 
@@ -44,7 +54,7 @@ class ExternalCourseReport:
             directory_name = self.course_project_folder.format(self.course_id)
             full_directory = base + directory_name
 
-            if update:
+            if update and os.path.exists(full_directory):
                 shutil.rmtree(full_directory)
             if not os.path.exists(full_directory):
                 shutil.copytree(base + self.default_project_folder, full_directory)
@@ -90,8 +100,6 @@ class ItemReport(ExternalCourseReport):
             course_structure = get_course_structure(course_id)
             course_structure.to_csv(course_structure_filename, index=False)
 
-        # course_structure = course_structure[course_structure.step_type == 'choice']
-        # course_structure.drop(['begin_date', 'hard_deadline'], axis=1, inplace=True)
         course_structure['step_variation'] = course_structure.groupby(['lesson_id', 'step_position']).cumcount()
         course_structure['step_variation'] += 1
 
@@ -101,6 +109,7 @@ class ItemReport(ExternalCourseReport):
         else:
             submissions = get_course_submissions(course_id, course_structure)
             submissions.to_csv(submissions_filename, index=False)
+        submissions = submissions[submissions.submission_time >= self.from_date]
 
         submissions = pd.merge(submissions, course_structure, on='step_id')
 
