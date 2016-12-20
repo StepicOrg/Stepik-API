@@ -1,16 +1,18 @@
 import argparse
 import shutil
 import os
+import time
+import datetime
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from library.api import API_HOST, get_token, fetch_objects
-from library.settings import ITEM_FORMAT, OPTION_FORMAT, STEP_FORMAT
+from library.api import API_HOST, get_token, fetch_objects, fetch_objects_by_pk
+from library.settings import ITEM_FORMAT, OPTION_FORMAT, STEP_FORMAT, STEP_STAT_FORMAT
 from library.utils import (html2latex, create_answer_matrix, get_course_structure,
-                           get_course_submissions, get_step_options,
+                           get_course_submissions, get_step_options, get_step_info,
                            get_item_statistics, get_question, process_step_url, process_options_with_name,
-                           get_video_peaks, get_video_stats)
+                           get_video_peaks, get_video_stats, get_unix_date, get_course_grades)
 
 
 class ExternalCourseReport:
@@ -27,6 +29,8 @@ class ExternalCourseReport:
         parser.add_argument('-c', '--course', type=int, help='course id')
         parser.add_argument('-n', '--nocache', action='store_true', help='no cache when generate latex report')
         parser.add_argument('-u', '--update', action='store_true', help='update project when compile latex report')
+        parser.add_argument('-d', '--date', type=str,
+                            help='date when data collection started, in the format YYYY-MM-DD ')
         return parser
 
     def build(self):
@@ -36,6 +40,13 @@ class ExternalCourseReport:
             self.course_id = args.course
             cached = not bool(args.nocache)
             update = bool(args.update)
+            date = args.date if args.date else '1970-01-01'
+            try:
+                timestamp = time.mktime(datetime.datetime.strptime(date.split('+')[0], '%Y-%m-%d').timetuple())
+                self.from_date = int(timestamp)
+            except ValueError:
+                print('data {} does not match format YYYY-MM-DD, default 1970-01-01'. format(date))
+                self.from_date = 0
 
             print('Course {} processing...'.format(self.course_id))
 
@@ -43,7 +54,7 @@ class ExternalCourseReport:
             directory_name = self.course_project_folder.format(self.course_id)
             full_directory = base + directory_name
 
-            if update:
+            if update and os.path.exists(full_directory):
                 shutil.rmtree(full_directory)
             if not os.path.exists(full_directory):
                 shutil.copytree(base + self.default_project_folder, full_directory)
@@ -89,8 +100,6 @@ class ItemReport(ExternalCourseReport):
             course_structure = get_course_structure(course_id)
             course_structure.to_csv(course_structure_filename, index=False)
 
-        # course_structure = course_structure[course_structure.step_type == 'choice']
-        # course_structure.drop(['begin_date', 'hard_deadline'], axis=1, inplace=True)
         course_structure['step_variation'] = course_structure.groupby(['lesson_id', 'step_position']).cumcount()
         course_structure['step_variation'] += 1
 
@@ -100,6 +109,7 @@ class ItemReport(ExternalCourseReport):
         else:
             submissions = get_course_submissions(course_id, course_structure)
             submissions.to_csv(submissions_filename, index=False)
+        submissions = submissions[submissions.submission_time >= self.from_date]
 
         submissions = pd.merge(submissions, course_structure, on='step_id')
 
@@ -169,7 +179,7 @@ class ItemReport(ExternalCourseReport):
                         step_options = step_options.append(options)
 
                     step_answers = create_answer_matrix(step_options, 'user_id', 'option_id', 'answer',
-                                                    lambda x: int(False not in x.tolist()))
+                                                        lambda x: int(False not in x.tolist()))
 
                     step_statistics = get_item_statistics(step_answers)
                     step_statistics = step_statistics.rename(columns={'item': 'option_id',
@@ -188,16 +198,16 @@ class ItemReport(ExternalCourseReport):
 
     def generate_latex_files(self, item_statistics, option_statistics, directory):
         # TODO: Improve recommendations based on item and option statistics
-        def get_recommendation(item, options):
+        def get_recommendation(question, options):
             recommendation = ''
-            difficulty = item.difficulty
-            discrimination = item.discrimination
-            item_total_corr = item.item_total_corr
+            difficulty = question.difficulty
+            discrimination = question.discrimination
+            item_total_corr = question.item_total_corr
 
             if options.empty or ('difficulty' not in options.columns.values):
                 n_nonfunct_options = 0
             else:
-                nonfunct_options = options[(options.difficulty < 0.05) & ~(options.is_correct)]
+                nonfunct_options = options[(options.difficulty < 0.05) & ~options.is_correct]
                 n_nonfunct_options = nonfunct_options.shape[0]
 
             if difficulty < 0.05:
@@ -210,7 +220,8 @@ class ItemReport(ExternalCourseReport):
                                   'если оно корректно составлено, то его лучше исключить.\n\n'
 
             if (0 < discrimination) and (discrimination < 0.3):
-                recommendation += 'У задания низкая дискриминативность: его можно оставить в качесте тренировочного задания, ' + \
+                recommendation += 'У задания низкая дискриминативность: ' + \
+                                  'его можно оставить в качесте тренировочного задания, ' + \
                                   'но для проверки знаний его лучше не использовать.\n\n'
 
             if (0 < item_total_corr) and (item_total_corr < 0.2):
@@ -311,8 +322,8 @@ class VideoReport(ExternalCourseReport):
             windows['course_id'] = course_id
             windows['step_url'] = step_url
 
-            windows['start_sec'] = windows['start'].apply(lambda x: '{:02d}:{:02d}'.format(x//60, x%60))
-            windows['end_sec'] = windows['end'].apply(lambda x: '{:02d}:{:02d}'.format(x//60, x%60))
+            windows['start_sec'] = windows['start'].apply(lambda x: '{:02d}:{:02d}'.format(x // 60, x % 60))
+            windows['end_sec'] = windows['end'].apply(lambda x: '{:02d}:{:02d}'.format(x // 60, x % 60))
 
             self.generate_latex_files(course_id, step_id, step_url, windows, directory)
             fig.savefig('{}step_{}.png'.format(directory, step_id))
@@ -341,10 +352,10 @@ class VideoReport(ExternalCourseReport):
                 total_file.write('\\begin{totalpeaks}\n')
                 for ind, row in top_peaks.iterrows():
                     total_file.write('\\totalpeak{{{}}}{{{}}}{{{}}}{{{}}}{{{:.2f}}}\n'.format(row.step_id,
-                                                                                        row.step_url,
-                                                                                        row.start_sec,
-                                                                                        row.end_sec,
-                                                                                        row.area))
+                                                                                              row.step_url,
+                                                                                              row.start_sec,
+                                                                                              row.end_sec,
+                                                                                              row.area))
                 total_file.write('\\end{totalpeaks}\n')
             else:
                 total_file.write('\n')
@@ -369,3 +380,89 @@ class VideoReport(ExternalCourseReport):
                                                                                                row.area))
                 step_file.write('\\end{peaks}\n\n')
 
+
+class DropoutReport(ExternalCourseReport):
+    default_project_folder = 'default-dropout'
+    default_report_name = 'course-dropout-report'
+    course_project_folder = 'course-{}-dropout'
+    course_report_name = 'course-{}-dropout-report'
+
+    def generate_latex_report(self, directory, cached=True):
+        course_id = self.course_id
+        token = get_token()
+
+        course_info = fetch_objects('courses', pk=course_id)[0]
+        course_title = course_info['title']
+        course_url = '{}/course/{}'.format(API_HOST, course_id)
+
+        with open('{}info.tex'.format(directory), 'w', encoding='utf-8') as info_file:
+            info_file.write('\\def\\coursetitle{{{}}}\n\\def\\courseurl{{{}}}\n'.format(course_title, course_url))
+
+        with open('{}map.tex'.format(directory), 'w', encoding='utf-8') as map_file:
+            map_file.write('')
+
+        time_now = time.time()
+        certificate_threshold = course_info['certificate_regular_threshold']
+        begin_date = get_unix_date(course_info['begin_date']) if course_info['begin_date'] else 0
+        last_deadline = get_unix_date(course_info['last_deadline']) if course_info['begin_date'] else time_now
+
+        course_teachers = course_info['instructors']
+        course_testers = fetch_objects_by_pk('groups', course_info["testers_group"], token=token)[0]['users']
+        users_to_delete = course_teachers + course_testers
+
+        # collect course grades
+        grades = get_course_grades(course_id, token=token)
+        learners = grades[['user_id', 'total_score', 'date_joined', 'last_viewed']].drop_duplicates()
+        learners = learners[~learners.user_id.isin(users_to_delete)]
+        learners = learners[(0 < learners.total_score) & (learners.total_score < certificate_threshold)]
+
+        # collect submissions
+        course_structure = get_course_structure(course_id, token=token)
+        course_submissions = get_course_submissions(course_id, course_structure, token)
+        course_submissions = course_submissions[course_submissions.user_id.isin(learners.user_id)]
+
+        # find last submissions
+        course_submissions = course_submissions[(begin_date < course_submissions.submission_time) &
+                                                (course_submissions.submission_time < last_deadline)]
+        idx_grouped = course_submissions.groupby('user_id')['submission_time']
+        idx = idx_grouped.transform(max) == course_submissions['submission_time']
+        last_submissions = course_submissions[idx].groupby('step_id', as_index=False)['submission_id'].count()
+        last_submissions = last_submissions.rename(columns={'submission_id': 'last_submissions'})
+
+        unique_submissions = course_submissions.groupby('step_id', as_index=False)['user_id'].agg(pd.Series.nunique)
+        unique_submissions = unique_submissions.rename(columns={'user_id': 'unique_submissions'})
+        step_stats = unique_submissions.merge(last_submissions)
+        step_stats['dropout_rate'] = step_stats.apply(lambda row: (row.last_submissions / row.unique_submissions
+                                                                   if row.unique_submissions else 0), axis=1)
+
+        step_stats = pd.merge(course_structure, step_stats, how='left')
+        additional_columns = ['viewed_by', 'passed_by', 'correct_ratio']
+        step_stats[additional_columns] = step_stats.step_id.apply(lambda step:
+                                                                  get_step_info(step)[additional_columns])
+        step_stats['difficulty'] = 1 - step_stats['correct_ratio']
+        step_stats['completion_rate'] = step_stats.apply((lambda row: row.passed_by / row.viewed_by
+                                                          if row.viewed_by else 0), axis=1)
+
+        step_stats.to_csv('cache/course-{}-stepstats.csv'.format(course_id), index=False)
+
+        step_stats['step_url'] = step_stats.apply(process_step_url, axis=1)
+        step_stats['completion_rate'] *= 100
+        step_stats['dropout_rate'] *= 100
+        step_stats['completion_rate'] = step_stats['completion_rate'].round(1)
+        step_stats['dropout_rate'] = step_stats['dropout_rate'].round(1)
+
+        for lesson_id in step_stats.lesson_id.unique():
+            step_lesson_stats = step_stats[step_stats.lesson_id == lesson_id]
+            step_lesson_stats = step_lesson_stats.fillna('')
+            lesson_url = '{}/lesson/{}'.format(API_HOST, lesson_id)
+            lesson_name = '{}'.format(lesson_id)  # TODO: use module and lesson position
+
+            with open('{}map.tex'.format(directory), 'a', encoding='utf-8') as map_file:
+                map_file.write('\\input{{generated/lesson-{}.tex}}\n'.format(lesson_id))
+
+            with open('{}lesson-{}.tex'.format(directory, lesson_id), 'w', encoding='utf-8') as lesson_file:
+                lesson_file.write('\\newpage\n\\lessoninfo{{{}}}{{{}}}\n'.format(lesson_name, lesson_url))
+                lesson_file.write('\\begin{lessonstatistics}')
+                for _, step_stat in step_lesson_stats.iterrows():
+                    lesson_file.write(STEP_STAT_FORMAT.format(stat=step_stat))
+                lesson_file.write('\\end{lessonstatistics}')

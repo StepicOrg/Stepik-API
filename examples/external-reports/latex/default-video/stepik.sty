@@ -123,10 +123,11 @@
 }
 
 
-\newcommand{\stepstatistics}[5]{
+\newcommand{\stepstatistics}[6]{
 \section*{Задание~#1}
 \begin{flushright}
 \begin{tabular}{p{0.2\textwidth}rr}
+&\textcolor{black}{Тип задания}: & #6\\
 &\textcolor{black}{Число ответивших}: & #5\\
 &\textcolor{black}{Сложность}: & #2\\
 &\textcolor{black}{Дискриминативность}: & #3\\
@@ -185,6 +186,26 @@
 \href{#2}{#1} & #3 & #4 & #5 \\
 }
 
+
+% dropout report
+\newcommand{\lessoninfo}[2]{
+\stepurl{#2}
+\section*{Урок~#1}
+}
+\newenvironment{lessonstatistics}{\begin{flushleft}\begin{tabular}{cccll}
+Шаг&Тип&Число просмотров&Процент завершения&Процент ухода\\}
+{\end{tabular}\end{flushleft}}
+\newcommand{\lessonstepstatistics}[6]{
+\href{#2}{#1} & #3 & #4 & 
+\def\temp{#5}\ifx\temp\empty\relax\else\coloredrule{BlueRibbon}{#5}\fi & 
+\def\temp{#6}\ifx\temp\empty\relax\else\coloredrule{NeonCarrot}{#6}\fi\\
+}
+
+\newlength\onepercentbox
+\setlength{\onepercentbox}{0.3mm}
+\newcommand{\coloredrule}[2]{
+{\color{#1}\rule{#2\onepercentbox}{1em}~#2\% }
+}
 
 % Course text to intro
 \let\@addcoursetexttointro\relax

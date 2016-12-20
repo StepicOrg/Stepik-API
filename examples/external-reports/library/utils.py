@@ -16,8 +16,10 @@ from library.settings import MIN_VIDEO_LENGTH
 
 
 def get_unix_date(date):
-    timestamp = time.mktime(datetime.datetime.strptime(date.split('+')[0], "%Y-%m-%dT%H:%M:%SZ").timetuple())
-    return timestamp
+    if date:
+        timestamp = time.mktime(datetime.datetime.strptime(date.split('+')[0], "%Y-%m-%dT%H:%M:%SZ").timetuple())
+        return int(timestamp)
+    return None
 
 
 def html2latex(text):
@@ -35,7 +37,13 @@ def process_step_url(row):
 
 # API functions
 
-def get_course_structure(course_id, token=None):
+def get_course_structure(course_id, cached=True, token=None):
+    # use cache
+    course_structure_filename = 'cache/course-{}-structure.csv'.format(course_id)
+    if os.path.isfile(course_structure_filename) and cached:
+        course_structure = pd.read_csv(course_structure_filename)
+        return course_structure
+
     if not token:
         token = get_token()
     course = fetch_objects_by_id('courses', course_id, token=token)[0]
@@ -85,13 +93,22 @@ def get_course_structure(course_id, token=None):
 
     course_structure = course_structure.merge(module_structure)
     course_structure = course_structure.sort_values(['module_position', 'lesson_position', 'step_position'])
+    course_structure.to_csv(course_structure_filename, index=False)
     return course_structure
 
 
-def get_course_submissions(course_id, course_structure=pd.DataFrame(), token=None):
-    header = ['submission_id', 'user_id', 'step_id', 'attempt_id', 'status', 'submission_time', 'reply', 'hint']
+def get_course_submissions(course_id, course_structure=pd.DataFrame(), cached=True, token=None):
+    header = ['submission_id', 'step_id', 'user_id', 'attempt_time', 'submission_time', 'status']
+
+    # use cache
+    course_submissions_filename = 'cache/course-{}-submissions.csv'.format(course_id)
+    if os.path.isfile(course_submissions_filename) and cached:
+        course_submissions = pd.read_csv(course_submissions_filename)
+        course_submissions = course_submissions[header]
+        return course_submissions
+
     if not token:
-        token=get_token()
+        token = get_token()
 
     if course_structure.empty:
         course_structure = get_course_structure(course_id, token)
@@ -122,7 +139,40 @@ def get_course_submissions(course_id, course_structure=pd.DataFrame(), token=Non
 
     course_submissions = course_submissions.rename(columns={'user': 'user_id'})
     course_submissions = course_submissions[header]
+    course_submissions.to_csv(course_submissions_filename, index=False)
     return course_submissions
+
+
+def get_course_grades(course_id, cached=True, token=None):
+    header = ['user_id', 'step_id', 'is_passed', 'score', 'total_score', 'date_joined', 'last_viewed']
+
+    # use cache
+    course_grades_filename = 'cache/course-{}-grades.csv'.format(course_id)
+    if os.path.isfile(course_grades_filename) and cached:
+        course_grades = pd.read_csv(course_grades_filename)
+        course_grades = course_grades[header]
+        return course_grades
+
+    if not token:
+        token = get_token()
+
+    course_grades = pd.DataFrame()
+    grades = fetch_objects('course-grades', course=course_id, token=token)
+
+    for grade in grades:
+        user_grade = pd.DataFrame(grade['results']).transpose()
+        user_grade['user_id'] = grade['user']
+        user_grade['total_score'] = grade['score']
+        user_grade['date_joined'] = grade['date_joined']
+        user_grade['last_viewed'] = grade['last_viewed']
+        course_grades = course_grades.append(user_grade)
+
+    course_grades['date_joined'] = course_grades['date_joined'].apply(get_unix_date)
+    course_grades['last_viewed'] = course_grades['last_viewed'].apply(get_unix_date)
+    course_grades = course_grades.reset_index(drop=True)
+    course_grades = course_grades[header]
+    course_grades.to_csv(course_grades_filename, index=False)
+    return course_grades
 
 
 def get_enrolled_users(course_id, token=None):
@@ -131,7 +181,6 @@ def get_enrolled_users(course_id, token=None):
 
     learner_group = fetch_objects('courses', token=token, pk=course_id)[0]['learners_group']
     users = fetch_objects('groups', token=token, pk=learner_group)[0]['users']
-
     return users
 
 
@@ -161,7 +210,6 @@ def process_options_with_name(data, reply, option_names):
                             'answer': answer,
                             'clue': clue})
     options = options[['is_multiple', 'option_id', 'answer', 'clue']]
-
     return options
 
 
@@ -199,6 +247,12 @@ def get_step_options(step_id):
     return options
 
 
+def get_step_info(step_id):
+    info = pd.Series(fetch_objects('steps', pk=step_id)[0])
+    info = info.rename(columns={'id': 'step_id'})
+    return info
+
+
 # IRT functions
 
 def create_answer_matrix(data, user_column, item_column, value_column, aggfunc=np.mean, time_column=None):
@@ -212,7 +266,6 @@ def create_answer_matrix(data, user_column, item_column, value_column, aggfunc=n
 
     if not answers.empty:
         answers = answers[value_column]
-
     return answers
 
 
@@ -331,9 +384,7 @@ def get_video_peaks(stats, plot=False, ax=None, ax2=None):
             lambda x: rewatching[x['start']:x['end']].sum()/total_area, axis=1)
     else:
         common_windows = pd.DataFrame(columns=header)
-
     return common_windows
-
 
 
 def get_smoothing_data(data, frac=0.05):
@@ -415,16 +466,14 @@ def detect_peaks(data, tau=1.5):
                 end = i
 
             windows = windows.append({'start': start,
-                            'peak': peak,
-                            'end': end,
-                            'rise_rate': rise_rate}, ignore_index=True)
+                                      'peak': peak,
+                                      'end': end,
+                                      'rise_rate': rise_rate}, ignore_index=True)
         else:
             [mean, meandev] = detect_peaks_update(mean, meandev, bins[i])
         i += 1
 
     windows[['start', 'peak', 'end']] = windows[['start', 'peak', 'end']].astype(int)
-    #print(windows)
-
     return windows
 
 
