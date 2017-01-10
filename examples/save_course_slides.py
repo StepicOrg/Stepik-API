@@ -116,4 +116,3 @@ for section in sections:
             text = step['block']['text']
             path = os.path.join(current_path, section['title'])
             find_slides(text, path)
-			
