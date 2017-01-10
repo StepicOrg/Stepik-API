@@ -45,7 +45,6 @@ def fetch_objects(obj_class, obj_ids, keep_order=True):
     step_size = 30
     for i in range(0, len(obj_ids), step_size):
         obj_ids_slice = obj_ids[i:i + step_size]
-        print(obj_ids_slice)
         api_url = '{}/api/{}s?{}'.format(api_host, obj_class,
                                          '&'.join('ids[]={}'.format(obj_id)
                                                   for obj_id in obj_ids_slice))
@@ -83,7 +82,6 @@ def find_slides(text, path):
             download_file("https://stepik.org" + link.get('href'), path)
 
 course = fetch_object("course", course_id)
-print(course['sections'])
 sections = fetch_objects("section", course['sections'])
 
 title = course['title']
