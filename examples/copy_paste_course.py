@@ -211,7 +211,8 @@ else: #PASTE FROM DATA
         old_id = row[1]
         print('Unit ID:', old_id, '-->', new_id)
 
-print()
-print(courses_map)
+    print()
+    print(courses_map)
+    
 print()
 print('Done!')
