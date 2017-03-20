@@ -106,8 +106,8 @@ if (session('access_token')) {
         array('id' => 401, 'required' => False, 'sections' => array(1, 2, 3, 4), 'need_to_pass' => 85, 'exams' => 1432), # Нейронные сети
         array('id' => 7, 'required' => False, 'sections' => array(1, 2, 3, 4, 5, 6), 'need_to_pass' => 85, 'exams' => 1430), # Программирование на языке C++
         array('id' => 187, 'required' => False, 'sections' => array(1, 2, 3, 4, 5, 6), 'need_to_pass' => 85, 'exams' => 1431), # Java. Базовый курс
+        array('id' => 2152, 'required' => False, 'sections' => array(1, 2, 3), 'need_to_pass' => 85, 'exams' => 2387), # Основы статистики. ч.3
         # TO ADD WHEN READY: Управление вычислениями (required)
-        # TO ADD WHEN READY: Основы статистики, часть 3 (not required)
         # TO ADD WHEN READY: Machine Learning (not required)
     );
 
