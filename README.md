@@ -69,7 +69,7 @@ Response:
 
 #### Authorization code flow
 
-- Set `grant type = autorization_code` and set `redirect_uri` in your aplication;
+- Set `grant type = autorization_code` and set `redirect_uri` in your application;
 - Redirect user to `https://stepik.org/oauth2/authorize/?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI`;
 - User should authenticate or register, and grant permissions to application;
 - It redirects to `redirect_uri` and receives the `CODE`;
