@@ -16,7 +16,7 @@ For example: `https://stepik.org/api/courses/1` returns not a single course, but
 
 ## Pagination
 
-All responses from `GET` requests are paginated. They contain extra `meta` object with the information about pagination. It may looks like this:
+All responses to `GET` requests are paginated. They contain extra `meta` object with the information about pagination. It may look like this:
 ```
 {
     meta: {
@@ -28,32 +28,32 @@ All responses from `GET` requests are paginated. They contain extra `meta` objec
 }
 ```
 
-If the next page exists, then it can be requested using get parameter `?page=...`. By default, if no parameter is given, it's equal to 1.
+If the next page exists, then it can be requested using get parameter `?page=...`. By default, if no parameter is given, it’s equal to 1.
 
 For example: `https://stepik.org/api/courses` is equal to `https://stepik.org/api/courses?page=1`. Next page: `https://stepik.org/api/courses?page=2` and so on.
 
-Usual page size is equal to 20 elements, but it can vary due to API endpoint, users permissions etc. We <b>do not recommend to rely on a constant page size</b>.
+Usual page size is equal to 20 elements, but it can vary due to API endpoint, user’s permissions etc. We <b>do not recommend to rely on a constant page size</b>.
 
 ## Side-Loading
 
 Response may also contain multiple objects, related to the requested object.
 
-For example: for registered user, response from `https://stepik.org/api/courses` also includes user's course `enrollments`.
+For example: for registered user, response from `https://stepik.org/api/courses` also includes user’s course `enrollments`.
 
 ## OAuth 2
 
-In order to call Stepik.org API as a registered user, you can use this user's OAuth2 keys.
+In order to call Stepik.org API as a registered user, you can use this user’s OAuth2 keys.
 You can get your keys by creating an application on https://stepik.org/oauth2/applications/ (while being logged in), and you can also set `redirect_uri`, `Client type` and `Authorization grant type` there.
 
 Authorization endpoint (Authorization code, Implicit grant; redirect_uri needed): `https://stepik.org/oauth2/authorize/.`
 
-Token endpoint (Authorization code, Password и Client credentials): `https://stepik.org/oauth2/token/`.
+Token endpoint (Authorization code, Password and Client credentials): `https://stepik.org/oauth2/token/`.
 
 #### Client credentials flow
 
-You can than obtain access token using the following client credential flow:
+You can then obtain access token using the following client credential flow:
 
-`curl -X POST -d "grant_type=client_credentials" -u"CLIENT_ID:CLIENT_SECRET" https://stepik.org/oauth2/token/`<br>
+`curl -X POST -d "grant_type=client_credentials" -u"CLIENT_ID:CLIENT_SECRET" https://stepik.org/oauth2/token/`
 
 Response:
 
@@ -69,7 +69,7 @@ Response:
 
 #### Authorization code flow
 
-- Set `grant type = autorization_code` and set `redirect_uri` in your aplication;
+- Set `grant type = autorization_code` and set `redirect_uri` in your application;
 - Redirect user to `https://stepik.org/oauth2/authorize/?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI`;
 - User should authenticate or register, and grant permissions to application;
 - It redirects to `redirect_uri` and receives the `CODE`;
@@ -85,7 +85,7 @@ For example: to get courses with IDs = `2`, `67`, `76` and `70`; you can to call
 
 This syntax is supported by all API endpoints.
 
-Don't make calls with large number of ids[]. Such calls may be rejected by the server because of a large HTTP header.
+Don’t make calls with large size of `ids[]`. Such calls may be rejected by the server because of a large HTTP header.
 
 ## Examples
 
