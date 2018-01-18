@@ -19,7 +19,7 @@ token = resp.json()['access_token']
 
 
 def get_user_id():
-    api_url = 'https://stepik.org/api/stepics/1'
+    api_url = 'https://stepik.org/api/stepics/1'  # should be stepic with "c"!
     user = requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).json()
     return user['users'][0]['id']
 

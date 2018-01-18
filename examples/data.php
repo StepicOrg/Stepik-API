@@ -69,10 +69,10 @@ if (session('access_token')) {
     # WELCOME!
     # =========
 
-    $stepics = apiRequest($apiURLBase . 'stepics/1');
-    $user_id = $stepics->profiles[0]->id;
-    $first_name = $stepics->profiles[0]->first_name;
-    $last_name = $stepics->profiles[0]->last_name;
+    $stepiks = apiRequest($apiURLBase . 'stepics/1');  # should be stepic with "c"!
+    $user_id = $stepiks->profiles[0]->id;
+    $first_name = $stepiks->profiles[0]->first_name;
+    $last_name = $stepiks->profiles[0]->last_name;
     echo '<html><head>';
     echo '<title>Личный кабинет онлайн-программы «Анализ данных»</title>';
     echo '<link rel="stylesheet" href="https://stepik.org/static/frontend/cli-build/stepic.css">';

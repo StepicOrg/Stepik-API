@@ -4,7 +4,7 @@ import requests
 client_id = "..."
 client_secret = "..."
 
-class StepicAPI(object):
+class StepikAPI(object):
 
     def __init__(self, client_id, client_secret):
         """ """
@@ -40,7 +40,7 @@ class StepicAPI(object):
         return self.get(url)
 
 
-sapi = StepicAPI(client_id, client_secret)
+sapi = StepikAPI(client_id, client_secret)
 
 #Example of getting list of user's courses
 has_next = True

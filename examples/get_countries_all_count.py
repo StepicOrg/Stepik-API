@@ -1,5 +1,5 @@
 # Run with Python 3
-# Count the number of countries known to Stepic!
+# Count the number of countries known to Stepik!
 
 import requests
 
@@ -29,4 +29,4 @@ while response['meta']['has_next']:
   response = get_data(page_id)
   count += len(response['countries'])
 
-print('Seems like Stepic has knowledge about {} countries. Wow!'.format(count))
+print('Seems like Stepik has knowledge about {} countries. Wow!'.format(count))

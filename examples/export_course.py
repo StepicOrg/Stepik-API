@@ -6,16 +6,16 @@ import requests
 import datetime
 
 # Enter parameters below:
-# 1. Get your keys at https://stepic.org/oauth2/applications/
+# 1. Get your keys at https://stepik.org/oauth2/applications/
 # (client type = confidential, authorization grant type = client credentials)
 client_id = '...'
 client_secret = '...'
-api_host = 'https://stepic.org'
+api_host = 'https://stepik.org'
 course_id = 1
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-response = requests.post('https://stepic.org/oauth2/token/',
+response = requests.post('https://stepik.org/oauth2/token/',
                          data={'grant_type': 'client_credentials'},
                          auth=auth)
 token = response.json().get('access_token', None)
@@ -24,7 +24,7 @@ if not token:
     exit(1)
 
 
-# 3. Call API (https://stepic.org/api/docs/) using this token.
+# 3. Call API (https://stepik.org/api/docs/) using this token.
 def fetch_object(obj_class, obj_id):
     api_url = '{}/api/{}s/{}'.format(api_host, obj_class, obj_id)
     response = requests.get(api_url,

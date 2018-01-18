@@ -3,21 +3,21 @@
 import json
 import requests
 
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential, authorization grant type = client credentials)
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential, authorization grant type = client credentials)
 client_id = '...'
 client_secret = '...'
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-resp = requests.post('https://stepic.org/oauth2/token/', data={'grant_type': 'client_credentials'}, auth=auth)
+resp = requests.post('https://stepik.org/oauth2/token/', data={'grant_type': 'client_credentials'}, auth=auth)
 token = json.loads(resp.text)['access_token']
 
-# 3. Call API (https://stepic.org/api/docs/) using this token.
+# 3. Call API (https://stepik.org/api/docs/) using this token.
 # Example:
 
 # 3.1. Create a new lesson
 
-api_url = 'https://stepic.org/api/lessons'
+api_url = 'https://stepik.org/api/lessons'
 data = {
 	'lesson': {
 		'title': 'My Lesson'
@@ -33,7 +33,7 @@ print('Lesson ID:', lesson_id)
 
 # 3.2. Add new theory step to this lesson
 
-api_url = 'https://stepic.org/api/step-sources'
+api_url = 'https://stepik.org/api/step-sources'
 data = {
 	'stepSource': {
 		'block': {
@@ -50,7 +50,7 @@ print('Step ID:', step_id)
 
 # 3.3. Update existing theory step
 
-api_url = 'https://stepic.org/api/step-sources/{}'.format(step_id)
+api_url = 'https://stepik.org/api/step-sources/{}'.format(step_id)
 data = {
 	'stepSource': {
 		'block': {
@@ -68,7 +68,7 @@ print('Step ID (update):', step_id)
 
 # 3.4. Add new multiple (single) choice step to this lesson
 
-api_url = 'https://stepic.org/api/step-sources'
+api_url = 'https://stepik.org/api/step-sources'
 data = {
 	'stepSource': {
 		'block': {
@@ -98,13 +98,13 @@ print('Step ID:', step_id)
 ###
 
 # Your lesson is ready!
-print('--> Check https://stepic.org/lesson/{}'.format(lesson_id))
+print('--> Check https://stepik.org/lesson/{}'.format(lesson_id))
 
 ###
 
 # 3.4. Create a new course
 
-api_url = 'https://stepic.org/api/courses'
+api_url = 'https://stepik.org/api/courses'
 data = {
 	'course': {
 		'title': 'My Course'
@@ -116,7 +116,7 @@ print('Course ID:', course_id)
 
 # 3.5. Add new module (section) to this course
 
-api_url = 'https://stepic.org/api/sections'
+api_url = 'https://stepik.org/api/sections'
 data = {
 	'section': {
 		'title': 'My Section',
@@ -130,7 +130,7 @@ print('Section ID:', section_id)
 
 # 3.6. Add your existing lesson to this section (it is called unit)
 
-api_url = 'https://stepic.org/api/units'
+api_url = 'https://stepik.org/api/units'
 data = {
 	'unit': {
 		'section': section_id,
@@ -145,6 +145,6 @@ print('Unit ID:', unit_id)
 ###
 
 # Your course is ready
-print('--> Check https://stepic.org/course/{}'.format(course_id))
+print('--> Check https://stepik.org/course/{}'.format(course_id))
 
 ###

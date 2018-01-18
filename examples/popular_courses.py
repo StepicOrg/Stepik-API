@@ -4,7 +4,7 @@ import requests
 
 ### DATA ENDS
 # Enter parameters below:
-# 1. Get your keys at https://stepic.org/oauth2/applications/ (client type = confidential,
+# 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
 client_id = '...'
 client_secret = '...'
@@ -12,7 +12,7 @@ api_host = 'https://stepik.org'
 
 # 2. Get a token
 auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-resp = requests.post('https://stepic.org/oauth2/token/',
+resp = requests.post('https://stepik.org/oauth2/token/',
                      data={'grant_type': 'client_credentials'},
                      auth=auth
                      )
@@ -21,7 +21,7 @@ if not token:
     raise RuntimeWarning('Client id/secret is probably incorrect')
 
 
-# 3. Call API (https://stepic.org/api/docs/) using this token.
+# 3. Call API (https://stepik.org/api/docs/) using this token.
 def fetch_object(obj_class, obj_id):
     api_url = '{}/api/{}s/{}'.format(api_host, obj_class, obj_id)
     response = requests.get(api_url,

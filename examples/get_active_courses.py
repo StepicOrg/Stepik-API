@@ -16,7 +16,7 @@ import datetime
 from dateutil import parser
 
 def get_token():
-    # Get your keys at https://stepic.org/oauth2/applications/
+    # Get your keys at https://stepik.org/oauth2/applications/
     # (client type = confidential, authorization grant type = client credentials)
     client_id = '...'
     client_secret = '...'
