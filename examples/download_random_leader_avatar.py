@@ -1,8 +1,10 @@
 # Run with Python 3
 import requests
 from random import randint
-import shutil
+from os.path import splitext
 import math
+import json
+
 
 # 1. Get your keys at https://stepik.org/oauth2/applications/ (client type = confidential,
 # authorization grant type = client credentials)
@@ -25,27 +27,19 @@ def get_leaders(count):
     pages = math.ceil(count / 20)
     leaders = []
     for page in range(1, pages + 1):
-        api_url = 'https://stepik.org/api/leaders/?page={}'.format(page)
-        response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).text)
-        leaders += response['leaders']
+        api_url = 'https://stepik.org/api/users?order=knowledge_rank&page={}'.format(page)
+        response = json.loads(requests.get(api_url, headers={'Authorization': 'Bearer ' + token}).text)
+        leaders += response['users']
         if not response['meta']['has_next']:
             break
 
     return leaders
 
-# Get user by id
-def get_user(id):
-    api_url = 'https://stepik.org/api/users/{}/'.format(id)
-    return requests.get(api_url, headers={'Authorization': 'Bearer '+ token}).json()['users'][0]
-
-
-# Download avatar by user id
-def download_avatar(id, filename):
-    avatar_url = get_user(id)['avatar']
-    response = requests.get(avatar_url, stream=True)
-    with open('{}.png'.format(filename), 'wb') as out_file:
-        shutil.copyfileobj(response.raw, out_file)
 
 # Get leader user randomly from 100 leaders and download his avatar
-rand_leader_id = get_leaders(100)[randint(0, 99)]['user']
-download_avatar(rand_leader_id, 'leader')
+avatar_url = get_leaders(100)[randint(0, 99)]['avatar']
+response = requests.get(avatar_url, stream=True)
+extension = splitext(avatar_url)[1]
+
+with open('leader{}'.format(extension), 'wb') as out_file:
+    out_file.write(response.content)
