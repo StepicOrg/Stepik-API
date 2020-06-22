@@ -84,7 +84,8 @@ data = {
 				'is_html_enabled': True,
 				'sample_size': 3,
 				'is_multiple_choice': False,
-				'preserve_order': False
+				'preserve_order': False,
+				'is_options_feedback': False
 			}
 		},
 		'lesson': lesson_id,
