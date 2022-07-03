@@ -2,6 +2,7 @@
 # Saves all step sources into foldered structure
 import os
 import json
+import re
 import requests
 import datetime
 
@@ -23,8 +24,10 @@ if not token:
     print('Unable to authorize with provided credentials')
     exit(1)
 
-
 # 3. Call API (https://stepik.org/api/docs/) using this token.
+def get_valid_filename(s):
+    return re.sub(r'(?u)[^-\w. ]', '', str(s)).strip()
+
 def fetch_object(obj_class, obj_id):
     api_url = '{}/api/{}s/{}'.format(api_host, obj_class, obj_id)
     response = requests.get(api_url,
@@ -68,9 +71,9 @@ for section in sections:
         for step in steps:
             step_source = fetch_object('step-source', step['id'])
             path = [
-                '{} {}'.format(str(course['id']).zfill(2), course['title']),
-                '{} {}'.format(str(section['position']).zfill(2), section['title']),
-                '{} {}'.format(str(unit['position']).zfill(2), lesson['title']),
+                '{} {}'.format(str(course['id']).zfill(2), get_valid_filename(course['title'])),
+                '{} {}'.format(str(section['position']).zfill(2), get_valid_filename(section['title'])),
+                '{} {}'.format(str(unit['position']).zfill(2), get_valid_filename(lesson['title'])),
                 '{}_{}_{}.step'.format(lesson['id'], str(step['position']).zfill(2), step['block']['name'])
                 ]
             try:
