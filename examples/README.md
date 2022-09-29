@@ -24,3 +24,4 @@
 |[`recommendations_top_example.py`](recommendations_top_example.py)|Prints list of top 10 recommended lessons for user. Warning! Get list of ALL lessons from stepik, so it might take a long time.|
 |[`save_course_steps.py`](save_course_steps.py)|Saves all step texts from course into single HTML file. Example of using multiple IDs in one API call.|
 |[`top_lessons_to_html.py`](top_lessons_to_html.py)|Generate HTML with top lessons sorted by number of views.|
+|[`videos_downloader.py`](videos_downloader.py)|Downloads all video files from a module (week) of a course or the whole course.|
